@@ -12,6 +12,9 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.*;
 import edu.cmu.sei.ams.cloudlet.*;
+import edu.cmu.sei.ams.cloudlet.android.CloudletCallback;
+import edu.cmu.sei.ams.cloudlet.android.FindCloudletByRankAsyncTask;
+import edu.cmu.sei.ams.cloudlet.android.StartServiceAsyncTask;
 import edu.cmu.sei.ams.cloudlet.rank.CpuBasedRanker;
 import edu.cmu.sei.cloudlet.client.CloudletReadyApp;
 import edu.cmu.sei.cloudlet.client.CurrentCloudlet;
@@ -52,9 +55,44 @@ public class CloudletSelectionActivity extends Activity
             @Override
             public void onItemClick(AdapterView<?> adapterView, View view, int i, long l)
             {
-                String item = (String) adapterView.getItemAtPosition(i);
+                final String item = (String) adapterView.getItemAtPosition(i);
                 Log.v("CLOUDLET", "SERVICE VM ID: " + item);
-                new FindCloudletAsync(item).execute();
+                new FindCloudletByRankAsyncTask(CloudletSelectionActivity.this, item, new CpuBasedRanker(), new CloudletCallback<Cloudlet>()
+                {
+                    @Override
+                    public void handle(Cloudlet result)
+                    {
+                        if (result == null)
+                            Toast.makeText(CloudletSelectionActivity.this, "Failed to find a nearby Cloudlet for the selected service", Toast.LENGTH_LONG).show();
+                        else
+                        {
+                            try
+                            {
+                                Service service = result.getServiceById(item);
+                                new StartServiceAsyncTask(service, CloudletSelectionActivity.this, new CloudletCallback<ServiceVM>()
+                                {
+                                    @Override
+                                    public void handle(ServiceVM result)
+                                    {
+                                        if (result == null)
+                                            Toast.makeText(CloudletSelectionActivity.this, "Failed to start the service", Toast.LENGTH_LONG).show();
+                                        else //Service was started
+                                        {
+                                            CloudletReadyApp app = new CloudletReadyApp(result);
+                                            app.start(CloudletSelectionActivity.this);
+                                        }
+                                    }
+                                }).execute();
+                            }
+                            catch (Exception e)
+                            {
+                                Log.e("CLOUDLET", "Failed to start the service", e);
+                                Toast.makeText(CloudletSelectionActivity.this, "Error occured while starting the service", Toast.LENGTH_LONG).show();
+                            }
+                        }
+                    }
+                }).execute();
+                //new FindCloudletAsync(item).execute();
             }
         });
 

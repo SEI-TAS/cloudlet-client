@@ -12,6 +12,8 @@ import javax.jmdns.ServiceListener;
 
 import edu.cmu.sei.ams.cloudlet.Cloudlet;
 import edu.cmu.sei.ams.cloudlet.CloudletFinder;
+import edu.cmu.sei.ams.cloudlet.android.CloudletCallback;
+import edu.cmu.sei.ams.cloudlet.android.FindCloudletsAsyncTask;
 import edu.cmu.sei.cloudlet.client.R;
 import edu.cmu.sei.cloudlet.client.CurrentCloudlet;
 
@@ -100,46 +102,17 @@ public class CloudletDiscoveryActivity extends Activity implements ServiceListen
 	{
 	    ConnectionInfoFragment connInfoFragment = (ConnectionInfoFragment) getFragmentManager().findFragmentById(R.id.connInfoPanel);
 	    connInfoFragment.updateWifiInfo();
-		
-		mProgressDialog = new ProgressDialog(this);
-		mProgressDialog.setTitle("Cloudlet Discovery");
-		mProgressDialog.setIndeterminate(false);
-		mProgressDialog.setProgressStyle(ProgressDialog.STYLE_SPINNER);
-		CloudletDiscoveryAsyncTask discoveryTask = new CloudletDiscoveryAsyncTask();
-		discoveryTask.execute();		
-	}
 
-	private class CloudletDiscoveryAsyncTask extends AsyncTask<String, Integer, String> {
-		@Override
-		protected void onPreExecute() {
-			Log.d(LOG_TAG, "onPreExecute");
-			if (mProgressDialog != null) {
-				mProgressDialog.setMessage("Locating Available Cloudlets");
-				mProgressDialog.show();
-			}
+        FindCloudletsAsyncTask task = new FindCloudletsAsyncTask(this, new CloudletCallback<List<Cloudlet>>()
+        {
+            @Override
+            public void handle(List<Cloudlet> cloudlets)
+            {
+                fillData(cloudlets);
+            }
+        });
 
-		}
-
-		@Override
-		protected String doInBackground(String... inputValues) {
-
-			Log.d(LOG_TAG, "doInBackground");
-			String status = ASYNC_TASK_STATUS_SUCCESS;
-			cloudlets = doZeroConfSetup();
-			return status;
-
-		}
-
-		@Override
-		protected void onPostExecute(String result) {
-
-			Log.d(LOG_TAG, "onPostExecute");
-			if (mProgressDialog != null) {
-				mProgressDialog.dismiss();
-				fillData(cloudlets);
-			}
-		}		
-
+        task.execute();
 	}
 
 	private List<Cloudlet> doZeroConfSetup()
