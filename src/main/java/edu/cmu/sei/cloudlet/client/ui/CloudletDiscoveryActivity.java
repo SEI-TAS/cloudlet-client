@@ -3,6 +3,7 @@ package edu.cmu.sei.cloudlet.client.ui;
 import java.net.InetAddress;
 import java.net.NetworkInterface;
 import java.net.URL;
+import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
 
@@ -124,6 +125,8 @@ public class CloudletDiscoveryActivity extends Activity implements ServiceListen
 	{
 		// Get IP address and port of the selected cloudlet
 		// It starts at 1 because the character at position 0 is "/"
+        Log.v(LOG_TAG, "cloudlets object: " + cloudlets);
+        Log.v(LOG_TAG, "cloudlets object: " + cloudlets.size());
 	    String selectedCloudletName = cloudlets.get(selectedCloudlet).getName();
 
 		String selectedCloudletIPAddress = cloudlets.get(selectedCloudlet).getAddress().getHostAddress();
@@ -182,6 +185,7 @@ public class CloudletDiscoveryActivity extends Activity implements ServiceListen
 		}
 		else
 		{
+            this.cloudlets = cloudlets;
 			Log.d(LOG_TAG, "Cloudlets nearby");
 			Log.d(LOG_TAG, "Cloudlet Info Length = " + cloudlets.size());
 			adapter.clear();
