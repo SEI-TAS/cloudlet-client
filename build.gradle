@@ -11,15 +11,13 @@ apply plugin: 'android'
 
 repositories {
     mavenLocal()
-    maven {
-        url 'http://aurora/artifactory/release'
-    }
+    maven { url 'http://aurora/artifactory/release' }
     mavenCentral()
 }
 
 android {
     compileSdkVersion 17
-    buildToolsVersion "19.0.3"
+    buildToolsVersion '19.0.3'
 
     defaultConfig {
         minSdkVersion 15
@@ -45,11 +43,9 @@ android {
 }
 
 dependencies {
-    compile (
-        'com.android.support:appcompat-v7:19.+',
-        'edu.cmu.sei.ams.cloudlet:client-lib:1.+',
-            'edu.cmu.sei.ams.cloudlet:client-lib-android:1.+',
-        'org.apache.httpcomponents:httpmime:4.1.1'
-    )
+    compile 'com.android.support:appcompat-v7:19.+'
+    compile 'edu.cmu.sei.ams.cloudlet:client-lib:1.+'
+    compile 'edu.cmu.sei.ams.cloudlet:client-lib-android:1.+'
+    compile 'org.apache.httpcomponents:httpmime:4.1.1'
     compile fileTree(dir: 'libs', include: ['*.jar'])
 }
