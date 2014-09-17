@@ -6,6 +6,7 @@ import android.os.Bundle;
 import android.view.View;
 import android.widget.Button;
 import edu.cmu.sei.cloudlet.client.R;
+import edu.cmu.sei.cloudlet.client.push.ui.AppListActivity;
 
 /**
  * User: jdroot
@@ -22,6 +23,7 @@ public class NewProcessSelectionActivity extends Activity
         setContentView(R.layout.new_process_selection);
 
         final Button cloudletButton = (Button) findViewById(R.id.cloudlet_selection);
+        final Button appButton = (Button) findViewById(R.id.app_selection);
         final Button serviceButton = (Button) findViewById(R.id.service_selection);
 
         //Make the old cloudlet app run
@@ -31,6 +33,15 @@ public class NewProcessSelectionActivity extends Activity
             public void onClick(View view)
             {
                 Intent i = new Intent(NewProcessSelectionActivity.this, CloudletDiscoveryActivity.class);
+                startActivity(i);
+            }
+        });
+
+        appButton.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view)
+            {
+                Intent i = new Intent(NewProcessSelectionActivity.this, AppListActivity.class);
                 startActivity(i);
             }
         });
