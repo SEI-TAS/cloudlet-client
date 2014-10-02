@@ -9,6 +9,7 @@ import android.net.Uri;
 import android.os.Build;
 import android.os.Bundle;
 import android.os.Environment;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -160,7 +161,6 @@ public class AppListActivity extends Activity
             md5.setText(app.getMD5Sum());
 
             final Button downloadButton = (Button)v.findViewById(R.id.download_app_button);
-            downloadButton.setText("Get/Launch");
             downloadButton.setOnClickListener(new View.OnClickListener()
             {
                 @Override
@@ -178,7 +178,7 @@ public class AppListActivity extends Activity
                                 intent.setDataAndType(Uri.fromFile(file), "application/vnd.android.package-archive");
                                 startActivityForResult(intent, 5000);
                             }
-                        });
+                        }).execute();
                     }
                 }
             });
