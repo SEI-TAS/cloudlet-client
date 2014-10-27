@@ -15,7 +15,8 @@ import android.util.Log;
  *
  */
 public class FileUtils {
-	
+
+
 	public static final String LOG_TAG = FileUtils.class.getName();
 	
 	public static String parseDataFileToString(final String fileName) {
