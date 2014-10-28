@@ -37,6 +37,8 @@ public class NewProcessSelectionActivity extends Activity
             }
         });
 
+        cloudletButton.setVisibility(View.GONE);
+
         appButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view)
@@ -56,5 +58,7 @@ public class NewProcessSelectionActivity extends Activity
                 startActivity(i);
             }
         });
+
+        serviceButton.setVisibility(View.GONE);
     }
 }
