@@ -12,9 +12,6 @@ apply plugin: 'android'
 
 repositories {
     mavenLocal()
-    maven {
-        url 'http://m2.ssdlab.sei.cmu.edu/release'
-    }
     mavenCentral()
 }
 
