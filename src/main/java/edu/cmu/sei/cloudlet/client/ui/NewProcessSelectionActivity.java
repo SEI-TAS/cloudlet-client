@@ -81,7 +81,7 @@ public class NewProcessSelectionActivity extends Activity
             @Override
             public void onClick(View view)
             {
-                Intent i = new Intent(NewProcessSelectionActivity.this, PairingActivity.class);
+                Intent i = new Intent(NewProcessSelectionActivity.this, BluetoothPairingActivity.class);
                 startActivity(i);
             }
         });

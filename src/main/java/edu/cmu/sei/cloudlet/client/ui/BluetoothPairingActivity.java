@@ -17,7 +17,7 @@ import android.widget.Toast;
 import edu.cmu.sei.cloudlet.client.R;
 import edu.cmu.sei.cloudlet.client.ska.SKAPairingService;
 
-public class PairingActivity extends Activity {
+public class BluetoothPairingActivity extends Activity {
 
     // Code to identify when the activity to enable Bluetooth returns.
     private final int RET_ENABLE_BLUETOOTH = 1;
@@ -25,7 +25,6 @@ public class PairingActivity extends Activity {
 
     private BluetoothAdapter mBluetoothAdapter = null;
 
-    private Switch mBluetoothOnSwitch = null;
     private Switch mDiscoverableSwitch = null;
 
     private SKAPairingService mPairingService = null;
@@ -51,22 +50,9 @@ public class PairingActivity extends Activity {
 
         mBluetoothAdapter = BluetoothAdapter.getDefaultAdapter();
 
-        mBluetoothOnSwitch = (Switch) findViewById(R.id.bluetoothSwitch);
         mDiscoverableSwitch = (Switch) findViewById(R.id.discoverySwitch);
 
         mPairingService = new SKAPairingService();
-
-        mBluetoothOnSwitch.setVisibility((View.GONE));
-    }
-
-    @Override
-    protected void onStart() {
-        super.onStart();
-
-        // Ensure the Bluetooth switch shows up as on, if Bluetooth is enabled.
-        if (mBluetoothAdapter.isEnabled()) {
-            mBluetoothOnSwitch.setChecked(true);
-        }
     }
 
     @Override

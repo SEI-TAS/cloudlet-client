@@ -79,7 +79,7 @@
             android:screenOrientation="portrait" >
         </activity>
         <activity
-            android:name=".ui.PairingActivity"
+            android:name=".ui.BluetoothPairingActivity"
             android:label="@string/title_activity_pairing" >
         </activity>
     </application>
