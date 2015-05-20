@@ -36,7 +36,7 @@
         android:layout_alignRight="@+id/bluetoothSwitch"
         android:layout_alignEnd="@+id/bluetoothSwitch"
         android:checked="false"
-        android:onClick="onBluetoothSwitch" />
+        android:onClick="onDiscoverableOnSwitch" />
 
     <TextView
         android:layout_width="wrap_content"
