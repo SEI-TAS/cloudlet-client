@@ -71,7 +71,7 @@ public class CloudletDiscoveryActivity extends Activity implements ServiceListen
 	protected ProgressDialog mProgressDialog = null;
 	public static final String ASYNC_TASK_STATUS_SUCCESS = "success";
 	public static final String ASYNC_TASK_STATUS_FAILURE = "failure";
-	private static final String LOG_TAG = "AvailableCloudletsActivity";
+	private static final String LOG_TAG = "AvailableCloudletsAct";
 	private static final String CLOUDLET_SERVER_DNS = "_cloudlet._tcp.local.";
 	List<Cloudlet> cloudlets = null;
 	String[] cloudletListData = null;
@@ -97,7 +97,7 @@ public class CloudletDiscoveryActivity extends Activity implements ServiceListen
 			public void onItemClick(AdapterView<?> parent, View view,
 					int position, long id) {
 				// Invoke OverlayDetailsActivity
-				invokeOverlayDetailsActivity(position);
+				//invokeOverlayDetailsActivity(position);
 			}
 		});
 		

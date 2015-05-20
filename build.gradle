@@ -43,9 +43,10 @@ android {
 }
 
 dependencies {
-    compile 'edu.cmu.sei.ams.log:android-slf4j-logger:1.4.0'
-    compile 'edu.cmu.sei.ams.cloudlet:client-lib:1.13.1'
-    compile 'edu.cmu.sei.ams.cloudlet:client-lib-android:1.6'
-    compile 'org.apache.httpcomponents:httpmime:4.1.1'
+    compile(
+        'edu.cmu.sei.ams.log:android-slf4j-logger:1.4.1',
+        'edu.cmu.sei.ams.cloudlet:client-lib:1.13.3',
+        'edu.cmu.sei.ams.cloudlet:client-lib-android:1.7.2',
+        'org.apache.httpcomponents:httpmime:4.1.1')
     compile fileTree(dir: 'libs', include: ['*.jar'])
 }

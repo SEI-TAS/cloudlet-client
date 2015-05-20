@@ -27,15 +27,17 @@
         android:layout_width="match_parent"
         android:layout_height="0dip"
         android:layout_weight="1.5"
-	    android:orientation="vertical" >    
-    
-	    <Button
-	        android:id="@+id/service_selection"
-	        android:layout_width="wrap_content"
-	        android:layout_height="wrap_content"
-            android:text="Select Service First" android:layout_centerVertical="true" android:layout_centerHorizontal="true"/>
-	    
-	</RelativeLayout>
+	    android:orientation="vertical" >
+
+        <Button
+            android:id="@+id/cloudlet_selection"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+android:text="List Cloudlets"
+            android:layout_alignParentBottom="true"
+            android:layout_centerHorizontal="true" />
+
+    </RelativeLayout>
 
     <RelativeLayout
             android:layout_width="match_parent"
@@ -55,14 +57,15 @@
         android:layout_width="match_parent"
         android:layout_height="0dip"
         android:layout_weight="1.5"
-	    android:orientation="vertical" > 	
-	
-	    <Button
-	        android:id="@+id/cloudlet_selection"
-	        android:layout_width="wrap_content"
-	        android:layout_height="wrap_content"
-            android:text="Select Cloudlet First" android:layout_centerVertical="true" android:layout_centerHorizontal="true"/>
+	    android:orientation="vertical" >
 
-	</RelativeLayout>
+        <Button
+            android:id="@+id/service_selection"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+android:text="Select Service First"
+            android:layout_centerVertical="true"
+            android:layout_centerHorizontal="true" />
+    </RelativeLayout>
 
 </LinearLayout>

@@ -66,7 +66,7 @@ public class NewProcessSelectionActivity extends Activity
             }
         });
 
-        cloudletButton.setVisibility(View.GONE);
+        //cloudletButton.setVisibility(View.GONE);
 
         appButton.setOnClickListener(new View.OnClickListener() {
             @Override
