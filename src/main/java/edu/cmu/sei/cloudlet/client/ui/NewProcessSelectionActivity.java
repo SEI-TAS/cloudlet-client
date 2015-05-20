@@ -53,14 +53,12 @@ public class NewProcessSelectionActivity extends Activity
 
         final Button cloudletButton = (Button) findViewById(R.id.cloudlet_selection);
         final Button appButton = (Button) findViewById(R.id.app_selection);
-        final Button serviceButton = (Button) findViewById(R.id.service_selection);
+        final Button pairingButton = (Button) findViewById(R.id.pairing_selection);
 
         //Make the old cloudlet app run
-        cloudletButton.setOnClickListener(new View.OnClickListener()
-        {
+        cloudletButton.setOnClickListener(new View.OnClickListener() {
             @Override
-            public void onClick(View view)
-            {
+            public void onClick(View view) {
                 Intent i = new Intent(NewProcessSelectionActivity.this, CloudletDiscoveryActivity.class);
                 startActivity(i);
             }
@@ -78,16 +76,14 @@ public class NewProcessSelectionActivity extends Activity
         });
 
         //Start the service selection activity
-        serviceButton.setOnClickListener(new View.OnClickListener()
+        pairingButton.setOnClickListener(new View.OnClickListener()
         {
             @Override
             public void onClick(View view)
             {
-                Intent i = new Intent(NewProcessSelectionActivity.this, CloudletSelectionActivity.class);
+                Intent i = new Intent(NewProcessSelectionActivity.this, PairingActivity.class);
                 startActivity(i);
             }
         });
-
-        serviceButton.setVisibility(View.GONE);
     }
 }

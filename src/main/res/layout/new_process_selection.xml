@@ -60,10 +60,10 @@ android:text="List Cloudlets"
 	    android:orientation="vertical" >
 
         <Button
-            android:id="@+id/service_selection"
+            android:id="@+id/pairing_selection"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-android:text="Select Service First"
+android:text="Pairing Process"
             android:layout_centerVertical="true"
             android:layout_centerHorizontal="true" />
     </RelativeLayout>

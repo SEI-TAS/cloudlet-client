@@ -4,4 +4,8 @@
     <string name="app_name">Cloudlet Client Application</string>
     <string name="availableCloudletsLabel">List of Available Cloudlets</string>
     <string name="synthesisLogLabel">Events Log</string>
+    <string name="title_activity_pairing">PairingActivity</string>
+
+    <string name="hello_world">Hello world!</string>
+    <string name="action_settings">Settings</string>
 </resources>
