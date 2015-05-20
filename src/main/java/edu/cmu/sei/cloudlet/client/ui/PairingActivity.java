@@ -30,7 +30,6 @@ public class PairingActivity extends Activity {
 
     private SKAPairingService mPairingService = null;
 
-
     private final BroadcastReceiver mModeReceiver = new BroadcastReceiver() {
         @Override
         public void onReceive(Context context, Intent intent) {
@@ -52,9 +51,12 @@ public class PairingActivity extends Activity {
 
         mBluetoothAdapter = BluetoothAdapter.getDefaultAdapter();
 
+        mBluetoothOnSwitch = (Switch) findViewById(R.id.bluetoothSwitch);
         mDiscoverableSwitch = (Switch) findViewById(R.id.discoverySwitch);
 
         mPairingService = new SKAPairingService();
+
+        mBluetoothOnSwitch.setVisibility((View.GONE));
     }
 
     @Override
@@ -63,7 +65,6 @@ public class PairingActivity extends Activity {
 
         // Ensure the Bluetooth switch shows up as on, if Bluetooth is enabled.
         if (mBluetoothAdapter.isEnabled()) {
-            mBluetoothOnSwitch = (Switch) findViewById(R.id.bluetoothSwitch);
             mBluetoothOnSwitch.setChecked(true);
         }
     }
@@ -72,16 +73,24 @@ public class PairingActivity extends Activity {
     protected void onResume() {
         super.onResume();
 
-        Log.v("", "Registering broadcastereceiver.");
-        IntentFilter intent = new IntentFilter();
-        intent.addAction(BluetoothAdapter.ACTION_SCAN_MODE_CHANGED);
-        registerReceiver(mModeReceiver, intent);
+        registerModeChangeReceiver();
     }
 
     @Override
     protected void onPause() {
         super.onPause();
 
+        unregisterModeChangeReceiver();
+    }
+
+    private void registerModeChangeReceiver() {
+        Log.v("", "Registering broadcastereceiver.");
+        IntentFilter intent = new IntentFilter();
+        intent.addAction(BluetoothAdapter.ACTION_SCAN_MODE_CHANGED);
+        registerReceiver(mModeReceiver, intent);
+    }
+
+    private void unregisterModeChangeReceiver() {
         try {
             unregisterReceiver(mModeReceiver);
         } catch (IllegalArgumentException e) {
@@ -134,6 +143,7 @@ public class PairingActivity extends Activity {
             if(mBluetoothAdapter.getScanMode() == BluetoothAdapter.SCAN_MODE_CONNECTABLE_DISCOVERABLE) {
                 // Only way to turn off discoverablity, turning it on for 1 second.
                 duration = 1;
+                mPairingService.stop();
             } else {
                 // If it is not in discoverable mode, ignore this request.
                 return;
@@ -153,7 +163,10 @@ public class PairingActivity extends Activity {
             case RET_ENABLE_DISCOVERABLE:
                 Log.v("", "Res: " + resultCode);
                 if (resultCode != Activity.RESULT_CANCELED) {
-                    mPairingService.start();
+                    boolean turn_off_hack = resultCode == 1;
+                    if(!turn_off_hack) {
+                        mPairingService.start();
+                    }
                 } else {
                     Log.d("", "Discoverable mode not enabled");
                 }
