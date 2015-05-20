@@ -12,18 +12,23 @@ import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
 import android.widget.Switch;
+import android.widget.Toast;
 
 import edu.cmu.sei.cloudlet.client.R;
+import edu.cmu.sei.cloudlet.client.ska.SKAPairingService;
 
 public class PairingActivity extends Activity {
 
     // Code to identify when the activity to enable Bluetooth returns.
     private final int RET_ENABLE_BLUETOOTH = 1;
+    private final int RET_ENABLE_DISCOVERABLE = 2;
 
     private BluetoothAdapter mBluetoothAdapter = null;
 
     private Switch mBluetoothOnSwitch = null;
     private Switch mDiscoverableSwitch = null;
+
+    private SKAPairingService mPairingService = null;
 
 
     private final BroadcastReceiver mModeReceiver = new BroadcastReceiver() {
@@ -34,6 +39,7 @@ public class PairingActivity extends Activity {
                         BluetoothAdapter.ERROR);
                 if (mode != BluetoothAdapter.SCAN_MODE_CONNECTABLE_DISCOVERABLE) {
                     mDiscoverableSwitch.setChecked(false);
+                    mPairingService.stop();
                 }
             }
         }
@@ -48,9 +54,7 @@ public class PairingActivity extends Activity {
 
         mDiscoverableSwitch = (Switch) findViewById(R.id.discoverySwitch);
 
-        IntentFilter intent = new IntentFilter();
-        intent.addAction(BluetoothAdapter.ACTION_SCAN_MODE_CHANGED);
-        registerReceiver(mModeReceiver, intent);
+        mPairingService = new SKAPairingService();
     }
 
     @Override
@@ -58,9 +62,30 @@ public class PairingActivity extends Activity {
         super.onStart();
 
         // Ensure the Bluetooth switch shows up as on, if Bluetooth is enabled.
-        if(mBluetoothAdapter.isEnabled()) {
+        if (mBluetoothAdapter.isEnabled()) {
             mBluetoothOnSwitch = (Switch) findViewById(R.id.bluetoothSwitch);
             mBluetoothOnSwitch.setChecked(true);
+        }
+    }
+
+    @Override
+    protected void onResume() {
+        super.onResume();
+
+        Log.v("", "Registering broadcastereceiver.");
+        IntentFilter intent = new IntentFilter();
+        intent.addAction(BluetoothAdapter.ACTION_SCAN_MODE_CHANGED);
+        registerReceiver(mModeReceiver, intent);
+    }
+
+    @Override
+    protected void onPause() {
+        super.onPause();
+
+        try {
+            unregisterReceiver(mModeReceiver);
+        } catch (IllegalArgumentException e) {
+            Log.v("", "Unregistering non-registered broadcastereceiver.");
         }
     }
 
@@ -118,6 +143,20 @@ public class PairingActivity extends Activity {
         // This turns on or off discoverability (using the hack above for off).
         Intent makeDiscoverableIntent = new Intent(BluetoothAdapter.ACTION_REQUEST_DISCOVERABLE);
         makeDiscoverableIntent.putExtra(BluetoothAdapter.EXTRA_DISCOVERABLE_DURATION, duration);
-        startActivity(makeDiscoverableIntent);
+        startActivityForResult(makeDiscoverableIntent, RET_ENABLE_DISCOVERABLE);
+    }
+
+    @Override
+    public void onActivityResult(int requestCode, int resultCode, Intent data) {
+        Log.v("", "Code: " + requestCode);
+        switch (requestCode) {
+            case RET_ENABLE_DISCOVERABLE:
+                Log.v("", "Res: " + resultCode);
+                if (resultCode != Activity.RESULT_CANCELED) {
+                    mPairingService.start();
+                } else {
+                    Log.d("", "Discoverable mode not enabled");
+                }
+        }
     }
 }
