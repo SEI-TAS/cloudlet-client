@@ -52,7 +52,7 @@ public class BluetoothPairingActivity extends Activity {
 
         mDiscoverableSwitch = (Switch) findViewById(R.id.discoverySwitch);
 
-        mPairingService = new SKAPairingService();
+        mPairingService = new SKAPairingService(this);
     }
 
     @Override
@@ -124,7 +124,7 @@ public class BluetoothPairingActivity extends Activity {
 
         int duration = 0;
         if (on) {
-            duration = 10;
+            duration = 300;
         } else {
             if(mBluetoothAdapter.getScanMode() == BluetoothAdapter.SCAN_MODE_CONNECTABLE_DISCOVERABLE) {
                 // Only way to turn off discoverablity, turning it on for 1 second.

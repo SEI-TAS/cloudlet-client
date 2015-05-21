@@ -3,6 +3,7 @@ package edu.cmu.sei.cloudlet.client.ska;
 import android.bluetooth.BluetoothAdapter;
 import android.bluetooth.BluetoothServerSocket;
 import android.bluetooth.BluetoothSocket;
+import android.content.Context;
 import android.util.Log;
 
 import java.io.IOException;
@@ -18,10 +19,13 @@ public class SKAPairingService {
     private static final String SKA_PAIRING_SERVICE_NAME = "SKAPairingService";
     private static final UUID SKA_PAIRING_SERVICE_ID = UUID.fromString("fa87c0d0-afac-11de-8a39-0800200c9a66");
 
+    private Context mContext = null;
+
     private final BluetoothAdapter mBluetoothAdapter;
     private PairingThread mPairingThread;
 
-    public SKAPairingService() {
+    public SKAPairingService(Context context) {
+        mContext = context;
         mBluetoothAdapter = BluetoothAdapter.getDefaultAdapter();
     }
 
@@ -79,6 +83,10 @@ public class SKAPairingService {
                 if(receivingSocket != null) {
                     // Start a thread to handle the request. Or handle it here if we want just 1 connection...
                     // Receive commands.
+                    MessageHandler handler = new MessageHandler(receivingSocket, mContext);
+                    handler.receiveMessages();
+
+                    Log.v(TAG, "Stopped receiving messages.");
                 }
 
             }
