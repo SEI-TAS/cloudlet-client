@@ -89,7 +89,7 @@ public class MessageHandler {
             sendMessage(androidId);
         }
         else if (message.equals(CMD_FILE_MASTER_PUBLIC_KEY)) {
-            Log.v(TAG, "master public key file request");
+            Log.v(TAG, "master public key file send request");
             sendMessage(REPLY_ACK);
 
             byte[] fileData = receiveFile();
@@ -98,7 +98,7 @@ public class MessageHandler {
             Log.v(TAG, fileAsString);
         }
         else if (message.equals(CMD_FILE_DEVICE_PRIVATE_KEY)) {
-            Log.v(TAG, "master public key file request");
+            Log.v(TAG, "device private key file send request");
             sendMessage(REPLY_ACK);
 
             byte[] fileData = receiveFile();
@@ -107,7 +107,7 @@ public class MessageHandler {
             Log.v(TAG, fileAsString);
         }
         else if (message.equals(CMD_FILE_SERVER_CERTIFICATE)) {
-            Log.v(TAG, "master public key file request");
+            Log.v(TAG, "server certificate file send request");
             sendMessage(REPLY_ACK);
 
             byte[] fileData = receiveFile();
@@ -137,31 +137,40 @@ public class MessageHandler {
     protected byte[] receiveFile() {
         Log.v(TAG, "Receiving file");
         int numBytes;
+        byte[] chunkBytes;
         byte[] fileData = new byte[MAX_FILE_SIZE];
         int fileDataSize = 0;
         byte[] buffer = new byte[CHUNK_SIZE];
+        int fileTotalSize = 0;
 
         try {
+            // First get the file size.
+            numBytes = mInStream.read(buffer);
+            chunkBytes = new byte[numBytes];
+            System.arraycopy(buffer, 0, chunkBytes, 0, numBytes);
+            fileTotalSize = Integer.parseInt(new String(chunkBytes));
+            Log.v(TAG, "File size: " + fileTotalSize);
+            sendMessage(REPLY_ACK);
+
             while(true) {
                 numBytes = mInStream.read(buffer);
                 Log.v(TAG, "Num bytes: " + numBytes);
 
                 if (numBytes > 0) {
-                    byte[] chunkBytes = new byte[numBytes];
+                    chunkBytes = new byte[numBytes];
                     System.arraycopy(buffer, 0, chunkBytes, 0, numBytes);
 
-                    // End of file command will only arrive by itself, in a smaller size than CHUNK_SIZE.
-                    if (numBytes < CHUNK_SIZE) {
-                        String message = new String(chunkBytes);
-                        if (message.equals(CMD_FILE_END)) {
-                            Log.v(TAG, "End of file received");
-                            break;
-                        }
-                    }
-                    else {
-                        // Accumulate data into the overall file data buffer.
-                        System.arraycopy(buffer, 0, fileData, fileDataSize, numBytes);
-                        fileDataSize += numBytes;
+                    String partial = new String(chunkBytes);
+                    Log.v(TAG, "Curr part: " + partial);
+
+                    // Accumulate data into the overall file data buffer.
+                    System.arraycopy(buffer, 0, fileData, fileDataSize, numBytes);
+                    fileDataSize += numBytes;
+
+                    // Stop receiving when we have obtained enough bytes for the given file size.
+                    if(fileDataSize >= fileTotalSize) {
+                        Log.v(TAG, "Finished receiving file.");
+                        break;
                     }
                 }
             }
@@ -170,6 +179,7 @@ public class MessageHandler {
         }
 
         // Create a buffer with the exact size of the received data.
+        Log.v(TAG, "File size: " + fileTotalSize + ", received: " + fileDataSize);
         byte[] realFileData = new byte[fileDataSize];
         System.arraycopy(fileData, 0, realFileData, 0, fileDataSize);
         return realFileData;
