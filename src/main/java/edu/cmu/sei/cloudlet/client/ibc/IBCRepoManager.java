@@ -2,6 +2,7 @@ package edu.cmu.sei.cloudlet.client.ibc;
 
 import android.content.Context;
 import android.provider.Settings;
+import android.util.Log;
 
 import java.io.ByteArrayInputStream;
 import java.security.cert.CertificateException;
@@ -14,6 +15,7 @@ import java.util.Collection;
  * Created by Sebastian on 2015-05-27.
  */
 public class IBCRepoManager {
+    private static final String TAG = "IBCRepoManager";
 
     /**
      * Returns an ID for the device.
@@ -30,15 +32,17 @@ public class IBCRepoManager {
      * @param fileContents
      */
     public static void storeServerCertificate(byte[] fileContents) {
-        try {
-            // Create a cert object from the data contents.
-            CertificateFactory certificateGenerator = CertificateFactory.getInstance("X.509");
-            Collection certs = certificateGenerator.generateCertificates(new ByteArrayInputStream(fileContents));
-            X509Certificate serverCertificate = (X509Certificate) certs.iterator().next();
+        Log.v(TAG, "Certificate: " + new String(fileContents));
 
-        } catch (CertificateException e) {
-            e.printStackTrace();
-        }
+        //try {
+            // Create a cert object from the data contents.
+        //    CertificateFactory certificateGenerator = CertificateFactory.getInstance("X.509");
+        //    Collection certs = certificateGenerator.generateCertificates(new ByteArrayInputStream(fileContents));
+        //    X509Certificate serverCertificate = (X509Certificate) certs.iterator().next();
+
+        //} catch (CertificateException e) {
+        //    e.printStackTrace();
+        //}
 
         // Add a network configuration for the given network associated to the certificate.
         /*WifiEnterpriseConfig enterpriseConfig = new WifiEnterpriseConfig();
@@ -55,15 +59,15 @@ public class IBCRepoManager {
      * Stores the device private IBC key.
      * @param fileContents
      */
-    public static void storeIBCPrivateKey(byte[] fileContents) {
-
+    public static void storeDevicePrivateKey(byte[] fileContents) {
+        Log.v(TAG, "Device Private Key: " + new String(fileContents));
     }
 
     /**
      * Stores the equivalent of the Master's public key, which currently are the IBE parameters.
      * @param fileContents
      */
-    public static void storeIBCMasterKey(byte[] fileContents) {
-
+    public static void storeMasterKey(byte[] fileContents) {
+        Log.v(TAG, "Master Key: " + new String(fileContents));
     }
 }

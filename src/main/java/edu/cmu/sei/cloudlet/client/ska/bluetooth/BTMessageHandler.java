@@ -96,7 +96,7 @@ public class BTMessageHandler {
             Log.v(TAG, "Data in file:");
             Log.v(TAG, fileAsString);
 
-            IBCRepoManager.storeIBCMasterKey(fileData);
+            IBCRepoManager.storeMasterKey(fileData);
             Log.v(TAG, "IBC master public key stored.");
         }
         else if (message.equals(CMD_FILE_DEVICE_PRIVATE_KEY)) {
@@ -108,7 +108,7 @@ public class BTMessageHandler {
             Log.v(TAG, "Data in file:");
             Log.v(TAG, fileAsString);
 
-            IBCRepoManager.storeIBCPrivateKey(fileData);
+            IBCRepoManager.storeDevicePrivateKey(fileData);
             Log.v(TAG, "IBC private key stored.");
         }
         else if (message.equals(CMD_FILE_SERVER_CERTIFICATE)) {

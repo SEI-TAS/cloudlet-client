@@ -88,6 +88,21 @@
             android:enabled="true"
             android:exported="true" >
         </service>
+        <service
+            android:name=".ska.adb.StoreCertificateService"
+            android:enabled="true"
+            android:exported="true" >
+        </service>
+        <service
+            android:name=".ska.adb.StoreMasterKeyService"
+            android:enabled="true"
+            android:exported="true" >
+        </service>
+        <service
+            android:name=".ska.adb.StoreDeviceKeyService"
+            android:enabled="true"
+            android:exported="true" >
+        </service>
     </application>
 
 </manifest>
