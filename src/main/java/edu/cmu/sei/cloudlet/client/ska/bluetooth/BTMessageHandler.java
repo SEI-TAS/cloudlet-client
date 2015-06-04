@@ -1,19 +1,20 @@
-package edu.cmu.sei.cloudlet.client.ska;
+package edu.cmu.sei.cloudlet.client.ska.bluetooth;
 
 import android.bluetooth.BluetoothSocket;
 import android.content.Context;
-import android.provider.Settings;
 import android.util.Log;
 
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.OutputStream;
 
+import edu.cmu.sei.cloudlet.client.ibc.IBCRepoManager;
+
 /**
  * Handles message receiving, sending, and processing.
  * Created by Sebastian on 2015-05-20.
  */
-public class MessageHandler {
+public class BTMessageHandler {
     private final String TAG = "MessageHandler";
 
     private final String CMD_GET_ID = "id";
@@ -27,13 +28,12 @@ public class MessageHandler {
     private final int CHUNK_SIZE = 4096;
     private final int MAX_FILE_SIZE = 10*1024*1024;
 
+    private final Context mContext;
     private final BluetoothSocket mSocket;
     private InputStream mInStream = null;
     private OutputStream mOutStream = null;
 
-    private final Context mContext;
-
-    public MessageHandler(BluetoothSocket socket, Context context) {
+    public BTMessageHandler(BluetoothSocket socket, Context context) {
         mSocket = socket;
         mContext = context;
 
@@ -81,12 +81,11 @@ public class MessageHandler {
     private void handleMessage(String message) {
         if(message.equals(CMD_GET_ID)) {
             Log.v(TAG, "id request");
-            String androidId = Settings.Secure.getString(
-                    mContext.getContentResolver(), Settings.Secure.ANDROID_ID);
-            Log.v(TAG, androidId);
+            String id = IBCRepoManager.getId(this.mContext);
+            Log.v(TAG, id);
 
             // Send the reply.
-            sendMessage(androidId);
+            sendMessage(id);
         }
         else if (message.equals(CMD_FILE_MASTER_PUBLIC_KEY)) {
             Log.v(TAG, "master public key file send request");
@@ -96,6 +95,9 @@ public class MessageHandler {
             String fileAsString = new String(fileData);
             Log.v(TAG, "Data in file:");
             Log.v(TAG, fileAsString);
+
+            IBCRepoManager.storeIBCMasterKey(fileData);
+            Log.v(TAG, "IBC master public key stored.");
         }
         else if (message.equals(CMD_FILE_DEVICE_PRIVATE_KEY)) {
             Log.v(TAG, "device private key file send request");
@@ -105,6 +107,9 @@ public class MessageHandler {
             String fileAsString = new String(fileData);
             Log.v(TAG, "Data in file:");
             Log.v(TAG, fileAsString);
+
+            IBCRepoManager.storeIBCPrivateKey(fileData);
+            Log.v(TAG, "IBC private key stored.");
         }
         else if (message.equals(CMD_FILE_SERVER_CERTIFICATE)) {
             Log.v(TAG, "server certificate file send request");
@@ -114,6 +119,9 @@ public class MessageHandler {
             String fileAsString = new String(fileData);
             Log.v(TAG, "Data in file:");
             Log.v(TAG, fileAsString);
+
+            IBCRepoManager.storeServerCertificate(fileData);
+            Log.v(TAG, "Server certificate stored.");
         }
     }
 

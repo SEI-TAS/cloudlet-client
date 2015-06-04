@@ -12,10 +12,9 @@ import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
 import android.widget.Switch;
-import android.widget.Toast;
 
 import edu.cmu.sei.cloudlet.client.R;
-import edu.cmu.sei.cloudlet.client.ska.SKAPairingService;
+import edu.cmu.sei.cloudlet.client.ska.bluetooth.BTSKAPairingService;
 
 public class BluetoothPairingActivity extends Activity {
 
@@ -27,7 +26,7 @@ public class BluetoothPairingActivity extends Activity {
 
     private Switch mDiscoverableSwitch = null;
 
-    private SKAPairingService mPairingService = null;
+    private BTSKAPairingService mPairingService = null;
 
     private final BroadcastReceiver mModeReceiver = new BroadcastReceiver() {
         @Override
@@ -52,7 +51,7 @@ public class BluetoothPairingActivity extends Activity {
 
         mDiscoverableSwitch = (Switch) findViewById(R.id.discoverySwitch);
 
-        mPairingService = new SKAPairingService(this);
+        mPairingService = new BTSKAPairingService(this);
     }
 
     @Override

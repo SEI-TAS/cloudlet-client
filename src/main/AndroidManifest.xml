@@ -82,6 +82,12 @@
             android:name=".ui.BluetoothPairingActivity"
             android:label="@string/title_activity_pairing" >
         </activity>
+
+        <service
+            android:name=".ska.adb.SaveIdToFileService"
+            android:enabled="true"
+            android:exported="true" >
+        </service>
     </application>
 
 </manifest>
