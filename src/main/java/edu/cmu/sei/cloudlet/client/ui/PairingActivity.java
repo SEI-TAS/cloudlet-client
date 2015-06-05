@@ -12,11 +12,13 @@ import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
 import android.widget.Switch;
+import android.widget.TextView;
 
 import edu.cmu.sei.cloudlet.client.R;
+import edu.cmu.sei.cloudlet.client.ibc.IBCRepoManager;
 import edu.cmu.sei.cloudlet.client.ska.bluetooth.BTSKAPairingService;
 
-public class BluetoothPairingActivity extends Activity {
+public class PairingActivity extends Activity {
 
     // Code to identify when the activity to enable Bluetooth returns.
     private final int RET_ENABLE_BLUETOOTH = 1;
@@ -27,6 +29,8 @@ public class BluetoothPairingActivity extends Activity {
     private Switch mDiscoverableSwitch = null;
 
     private BTSKAPairingService mPairingService = null;
+
+    private TextView mIdLabel = null;
 
     private final BroadcastReceiver mModeReceiver = new BroadcastReceiver() {
         @Override
@@ -50,6 +54,8 @@ public class BluetoothPairingActivity extends Activity {
         mBluetoothAdapter = BluetoothAdapter.getDefaultAdapter();
 
         mDiscoverableSwitch = (Switch) findViewById(R.id.discoverySwitch);
+        mIdLabel = (TextView) findViewById(R.id.idLabel);
+        mIdLabel.setText(IBCRepoManager.getId(this));
 
         mPairingService = new BTSKAPairingService(this);
     }
