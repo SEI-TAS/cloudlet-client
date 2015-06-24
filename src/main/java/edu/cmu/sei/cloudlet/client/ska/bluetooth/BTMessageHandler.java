@@ -120,7 +120,7 @@ public class BTMessageHandler {
             Log.v(TAG, "Data in file:");
             Log.v(TAG, fileAsString);
 
-            IBCRepoManager.storeServerCertificate(fileData);
+            IBCRepoManager.storeServerCertificate(fileData, mContext);
             Log.v(TAG, "Server certificate stored.");
         }
     }

@@ -23,7 +23,7 @@ public class StoreCertificateService extends Service {
     @Override
     public int onStartCommand (Intent intent, int flags, int startId) {
         byte[] data = FileHandler.readFromFile(CERT_FILE);
-        IBCRepoManager.storeServerCertificate(data);
+        IBCRepoManager.storeServerCertificate(data, this);
 
         // We don't need this service to run anymore.
         stopSelf();

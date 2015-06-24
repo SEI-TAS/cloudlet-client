@@ -1,8 +1,11 @@
 package edu.cmu.sei.cloudlet.client.ibc;
 
 import android.content.Context;
+import android.net.wifi.WifiConfiguration;
+import android.net.wifi.WifiManager;
 import android.provider.Settings;
 import android.util.Log;
+import android.net.wifi.WifiEnterpriseConfig;
 
 import java.io.ByteArrayInputStream;
 import java.security.cert.CertificateException;
@@ -31,28 +34,35 @@ public class IBCRepoManager {
      * More exactly, creates a WPA2-Enterprise configuration with the given certificate.
      * @param fileContents
      */
-    public static void storeServerCertificate(byte[] fileContents) {
+    public static void storeServerCertificate(byte[] fileContents, Context context) {
         Log.v(TAG, "Certificate: " + new String(fileContents));
 
-        //try {
-            // Create a cert object from the data contents.
-        //    CertificateFactory certificateGenerator = CertificateFactory.getInstance("X.509");
-        //    Collection certs = certificateGenerator.generateCertificates(new ByteArrayInputStream(fileContents));
-        //    X509Certificate serverCertificate = (X509Certificate) certs.iterator().next();
+        WifiManager wifiManager = (WifiManager) context.getSystemService(Context.WIFI_SERVICE);
 
-        //} catch (CertificateException e) {
-        //    e.printStackTrace();
-        //}
+        X509Certificate serverCertificate = null;
+        try {
+            // Create a cert object from the data contents.
+            CertificateFactory certificateGenerator = CertificateFactory.getInstance("X.509");
+            Collection certs = certificateGenerator.generateCertificates(new ByteArrayInputStream(fileContents));
+            serverCertificate = (X509Certificate) certs.iterator().next();
+
+        } catch (CertificateException e) {
+            e.printStackTrace();
+        }
 
         // Add a network configuration for the given network associated to the certificate.
-        /*WifiEnterpriseConfig enterpriseConfig = new WifiEnterpriseConfig();
-        wifiConfig = new WifiConfiguration();
-        wifiConfig.SSID = 'test';
+        WifiConfiguration wifiConfig = new WifiConfiguration();
+        wifiConfig.SSID = "test";
+        wifiConfig.allowedKeyManagement.set(WifiConfiguration.KeyMgmt.WPA_EAP);
+        wifiConfig.allowedKeyManagement.set(WifiConfiguration.KeyMgmt.IEEE8021X);
 
-        enterpriseConfig.setCertificate(serverCertificate);
-        enterpriseConfig.setEapMethod(WifiEnterpriseConfig.Eap.PEAP);
+        WifiEnterpriseConfig enterpriseConfig = new WifiEnterpriseConfig();
+        enterpriseConfig.setCaCertificate(serverCertificate);
+        enterpriseConfig.setEapMethod(WifiEnterpriseConfig.Eap.TTLS);
+        enterpriseConfig.setPhase2Method(WifiEnterpriseConfig.Phase2.PAP);
         wifiConfig.enterpriseConfig = enterpriseConfig;
-        networkId = wfm.addNetwork(wifiConfig);*/
+
+        wifiManager.addNetwork(wifiConfig);
     }
 
     /**
