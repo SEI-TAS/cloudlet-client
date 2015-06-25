@@ -8,7 +8,7 @@ import java.io.IOException;
 import java.io.InputStream;
 import java.io.OutputStream;
 
-import edu.cmu.sei.cloudlet.client.ibc.IBCRepoManager;
+import edu.cmu.sei.cloudlet.client.ibc.IBCAuthManager;
 
 /**
  * Handles message receiving, sending, and processing.
@@ -21,7 +21,8 @@ public class BTMessageHandler {
     private final String CMD_FILE_MASTER_PUBLIC_KEY = "master_public_key";
     private final String CMD_FILE_DEVICE_PRIVATE_KEY = "device_private_key";
     private final String CMD_FILE_SERVER_CERTIFICATE = "server_certificate";
-    private final String CMD_FILE_END = "file_end";
+    private final String CMD_FILE_DEVICE_CERTIFICATE = "device_certificate";
+    private final String CMD_NETWORK_ID = "network_id";
 
     private final String REPLY_ACK = "ack";
 
@@ -65,7 +66,13 @@ public class BTMessageHandler {
                     message = new String(message_bytes);
                     Log.v(TAG, "Message received: " + message);
 
-                    handleMessage(message);
+                    // Messages will have either a command, or a command plus data.
+                    String[] messageParts = message.split("#", 2);
+                    String command = messageParts[0];
+                    String data = null;
+                    if(messageParts.length > 1)
+                        data = messageParts[1];
+                    handleMessage(command, data);
                 }
             } catch (IOException e) {
                 Log.e(TAG, "No longer connected.");
@@ -76,52 +83,59 @@ public class BTMessageHandler {
 
     /**
      * Handles a received message.
-     * @param message a command from a cloudlet.
+     * @param command a command from a cloudlet.
      */
-    private void handleMessage(String message) {
-        if(message.equals(CMD_GET_ID)) {
+    private void handleMessage(String command, String data) {
+        if(command.equals(CMD_GET_ID)) {
             Log.v(TAG, "id request");
-            String id = IBCRepoManager.getId(this.mContext);
+            String id = IBCAuthManager.getDeviceId(this.mContext);
             Log.v(TAG, id);
 
             // Send the reply.
             sendMessage(id);
         }
-        else if (message.equals(CMD_FILE_MASTER_PUBLIC_KEY)) {
+        else if (command.equals(CMD_FILE_MASTER_PUBLIC_KEY)) {
             Log.v(TAG, "master public key file send request");
             sendMessage(REPLY_ACK);
 
             byte[] fileData = receiveFile();
-            String fileAsString = new String(fileData);
-            Log.v(TAG, "Data in file:");
-            Log.v(TAG, fileAsString);
 
-            IBCRepoManager.storeMasterKey(fileData);
+            IBCAuthManager.storeServerPublicKey(fileData);
             Log.v(TAG, "IBC master public key stored.");
         }
-        else if (message.equals(CMD_FILE_DEVICE_PRIVATE_KEY)) {
+        else if (command.equals(CMD_FILE_DEVICE_PRIVATE_KEY)) {
             Log.v(TAG, "device private key file send request");
             sendMessage(REPLY_ACK);
 
             byte[] fileData = receiveFile();
-            String fileAsString = new String(fileData);
-            Log.v(TAG, "Data in file:");
-            Log.v(TAG, fileAsString);
 
-            IBCRepoManager.storeDevicePrivateKey(fileData);
+            IBCAuthManager.storeDevicePrivateKey(fileData);
             Log.v(TAG, "IBC private key stored.");
         }
-        else if (message.equals(CMD_FILE_SERVER_CERTIFICATE)) {
+        else if (command.equals(CMD_FILE_SERVER_CERTIFICATE)) {
             Log.v(TAG, "server certificate file send request");
             sendMessage(REPLY_ACK);
 
             byte[] fileData = receiveFile();
-            String fileAsString = new String(fileData);
-            Log.v(TAG, "Data in file:");
-            Log.v(TAG, fileAsString);
 
-            IBCRepoManager.storeServerCertificate(fileData, mContext);
+            IBCAuthManager.storeServerCertificate(fileData);
             Log.v(TAG, "Server certificate stored.");
+        }
+        else if (command.equals(CMD_FILE_DEVICE_CERTIFICATE)) {
+            Log.v(TAG, "device certificate file send request");
+            sendMessage(REPLY_ACK);
+
+            byte[] fileData = receiveFile();
+
+            IBCAuthManager.storeDeviceCertificate(fileData);
+            Log.v(TAG, "Device certificate stored.");
+        }
+        else if (command.equals(CMD_NETWORK_ID)) {
+            Log.v(TAG, "Request to receive network id.");
+            sendMessage(REPLY_ACK);
+
+            IBCAuthManager.setupWifiProfile(data, mContext);
+            Log.v(TAG, "Network profile created.");
         }
     }
 
@@ -140,7 +154,7 @@ public class BTMessageHandler {
 
     /**
      * Receives a file and returns it as a byte array.
-     * @return A byte array with the file data.
+     * @return A String with the file data.
      */
     protected byte[] receiveFile() {
         Log.v(TAG, "Receiving file");
@@ -190,6 +204,11 @@ public class BTMessageHandler {
         Log.v(TAG, "File size: " + fileTotalSize + ", received: " + fileDataSize);
         byte[] realFileData = new byte[fileDataSize];
         System.arraycopy(fileData, 0, realFileData, 0, fileDataSize);
+
+        String fileAsString = new String(realFileData);
+        Log.v(TAG, "Data in file:");
+        Log.v(TAG, fileAsString);
+
         return realFileData;
     }
 }

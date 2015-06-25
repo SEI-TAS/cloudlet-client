@@ -5,15 +5,13 @@ import android.content.Intent;
 import android.os.IBinder;
 import android.util.Log;
 
-import java.io.File;
-import java.io.PrintWriter;
-
-import edu.cmu.sei.cloudlet.client.ibc.IBCRepoManager;
+import edu.cmu.sei.cloudlet.client.ibc.IBCAuthManager;
+import edu.cmu.sei.cloudlet.client.utils.FileHandler;
 
 public class SaveIdToFileService extends Service {
     private final String TAG = "SaveIdToFileService";
 
-    private final String ID_FILE = FileHandler.FILES_PATH + "id.txt";
+    private final String ID_FILE = ADBConstants.ADB_FILES_PATH + "id.txt";
 
     public SaveIdToFileService() {
     }
@@ -26,7 +24,7 @@ public class SaveIdToFileService extends Service {
 
     @Override
     public int onStartCommand (Intent intent, int flags, int startId) {
-        String deviceId = IBCRepoManager.getId(this);
+        String deviceId = IBCAuthManager.getDeviceId(this);
         Log.v(TAG, "Id: " + deviceId);
 
         Log.v(TAG, "Writing to file.");

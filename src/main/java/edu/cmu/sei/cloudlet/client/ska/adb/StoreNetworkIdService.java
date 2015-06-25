@@ -4,15 +4,17 @@ import android.app.Service;
 import android.content.Intent;
 import android.os.IBinder;
 
+import java.io.UnsupportedEncodingException;
+
 import edu.cmu.sei.cloudlet.client.ibc.IBCAuthManager;
 import edu.cmu.sei.cloudlet.client.utils.FileHandler;
 
-public class StoreMasterKeyService extends Service {
-    private final String TAG = "StoreMasterKeyService";
+public class StoreNetworkIdService extends Service {
+    private final String TAG = "StoreNetworkIdService";
 
-    private final String MKEY_FILE = ADBConstants.ADB_FILES_PATH + "master_key.txt";
+    private final String NET_ID_FILE = ADBConstants.ADB_FILES_PATH + "network_id.txt";
 
-    public StoreMasterKeyService() {
+    public StoreNetworkIdService() {
     }
 
     @Override
@@ -23,8 +25,14 @@ public class StoreMasterKeyService extends Service {
 
     @Override
     public int onStartCommand (Intent intent, int flags, int startId) {
-        byte[] data = FileHandler.readFromFile(MKEY_FILE);
-        IBCAuthManager.storeServerPublicKey(data);
+        byte[] data = FileHandler.readFromFile(NET_ID_FILE);
+
+        try {
+            String networkId = new String(data, "UTF-8");
+            IBCAuthManager.setupWifiProfile(networkId, this);
+        } catch(UnsupportedEncodingException e) {
+            e.printStackTrace();
+        }
 
         // We don't need this service to run anymore.
         stopSelf();

@@ -89,7 +89,7 @@
             android:exported="true" >
         </service>
         <service
-            android:name=".ska.adb.StoreCertificateService"
+            android:name=".ska.adb.StoreServerCertificateService"
             android:enabled="true"
             android:exported="true" >
         </service>
@@ -100,6 +100,16 @@
         </service>
         <service
             android:name=".ska.adb.StoreDeviceKeyService"
+            android:enabled="true"
+            android:exported="true" >
+        </service>
+        <service
+            android:name=".ska.adb.StoreDeviceCertificateService"
+            android:enabled="true"
+            android:exported="true" >
+        </service>
+        <service
+            android:name=".ska.adb.StoreNetworkIdService"
             android:enabled="true"
             android:exported="true" >
         </service>

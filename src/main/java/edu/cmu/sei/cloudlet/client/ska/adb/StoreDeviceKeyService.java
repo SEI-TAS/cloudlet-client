@@ -4,12 +4,13 @@ import android.app.Service;
 import android.content.Intent;
 import android.os.IBinder;
 
-import edu.cmu.sei.cloudlet.client.ibc.IBCRepoManager;
+import edu.cmu.sei.cloudlet.client.ibc.IBCAuthManager;
+import edu.cmu.sei.cloudlet.client.utils.FileHandler;
 
 public class StoreDeviceKeyService extends Service {
     private final String TAG = "StoreDeviceKeyService";
 
-    private final String PKEY_FILE = FileHandler.FILES_PATH + "device_pkey.txt";
+    private final String PKEY_FILE = ADBConstants.ADB_FILES_PATH + "device_pkey.txt";
 
     public StoreDeviceKeyService() {
     }
@@ -23,7 +24,7 @@ public class StoreDeviceKeyService extends Service {
     @Override
     public int onStartCommand (Intent intent, int flags, int startId) {
         byte[] data = FileHandler.readFromFile(PKEY_FILE);
-        IBCRepoManager.storeDevicePrivateKey(data);
+        IBCAuthManager.storeDevicePrivateKey(data);
 
         // We don't need this service to run anymore.
         stopSelf();

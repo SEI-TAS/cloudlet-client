@@ -7,12 +7,12 @@ import android.os.IBinder;
 import edu.cmu.sei.cloudlet.client.ibc.IBCAuthManager;
 import edu.cmu.sei.cloudlet.client.utils.FileHandler;
 
-public class StoreMasterKeyService extends Service {
-    private final String TAG = "StoreMasterKeyService";
+public class StoreServerCertificateService extends Service {
+    private final String TAG = "StoreServerCertificateService";
 
-    private final String MKEY_FILE = ADBConstants.ADB_FILES_PATH + "master_key.txt";
+    private final String CERT_FILE = ADBConstants.ADB_FILES_PATH + "server_certificate.cer";
 
-    public StoreMasterKeyService() {
+    public StoreServerCertificateService() {
     }
 
     @Override
@@ -23,8 +23,8 @@ public class StoreMasterKeyService extends Service {
 
     @Override
     public int onStartCommand (Intent intent, int flags, int startId) {
-        byte[] data = FileHandler.readFromFile(MKEY_FILE);
-        IBCAuthManager.storeServerPublicKey(data);
+        byte[] data = FileHandler.readFromFile(CERT_FILE);
+        IBCAuthManager.storeServerCertificate(data);
 
         // We don't need this service to run anymore.
         stopSelf();

@@ -4,14 +4,15 @@ import android.app.Service;
 import android.content.Intent;
 import android.os.IBinder;
 
-import edu.cmu.sei.cloudlet.client.ibc.IBCRepoManager;
+import edu.cmu.sei.cloudlet.client.ibc.IBCAuthManager;
+import edu.cmu.sei.cloudlet.client.utils.FileHandler;
 
-public class StoreCertificateService extends Service {
-    private final String TAG = "StoreCertificateService";
+public class StoreDeviceCertificateService extends Service {
+    private final String TAG = "StoreDeviceCertificateService";
 
-    private final String CERT_FILE = FileHandler.FILES_PATH + "server_certificate.cer";
+    private final String CERT_FILE = ADBConstants.ADB_FILES_PATH + "device_certificate.cer";
 
-    public StoreCertificateService() {
+    public StoreDeviceCertificateService() {
     }
 
     @Override
@@ -23,7 +24,7 @@ public class StoreCertificateService extends Service {
     @Override
     public int onStartCommand (Intent intent, int flags, int startId) {
         byte[] data = FileHandler.readFromFile(CERT_FILE);
-        IBCRepoManager.storeServerCertificate(data, this);
+        IBCAuthManager.storeDeviceCertificate(data);
 
         // We don't need this service to run anymore.
         stopSelf();
