@@ -94,7 +94,7 @@
             android:exported="true" >
         </service>
         <service
-            android:name=".ska.adb.StoreMasterKeyService"
+            android:name=".ska.adb.StoreServerPublicKeyService"
             android:enabled="true"
             android:exported="true" >
         </service>

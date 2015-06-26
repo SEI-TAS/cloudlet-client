@@ -18,7 +18,7 @@ public class BTMessageHandler {
     private final String TAG = "MessageHandler";
 
     private final String CMD_GET_ID = "id";
-    private final String CMD_FILE_MASTER_PUBLIC_KEY = "master_public_key";
+    private final String CMD_FILE_MASTER_PUBLIC_KEY = "server_public_key";
     private final String CMD_FILE_DEVICE_PRIVATE_KEY = "device_private_key";
     private final String CMD_FILE_SERVER_CERTIFICATE = "server_certificate";
     private final String CMD_FILE_DEVICE_CERTIFICATE = "device_certificate";

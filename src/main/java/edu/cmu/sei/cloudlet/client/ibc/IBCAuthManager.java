@@ -13,6 +13,7 @@ import java.security.cert.CertificateException;
 import java.security.cert.CertificateFactory;
 import java.security.cert.X509Certificate;
 import java.util.Collection;
+import java.util.NoSuchElementException;
 
 import edu.cmu.sei.cloudlet.client.utils.FileHandler;
 
@@ -103,6 +104,10 @@ public class IBCAuthManager {
             e.printStackTrace();
         } catch (FileNotFoundException e) {
             e.printStackTrace();
+        } catch (NoSuchElementException e) {
+            e.printStackTrace();
+            Log.e(TAG, "No valid certificates found");
+            return;
         }
 
         // Create basic network configuration.
