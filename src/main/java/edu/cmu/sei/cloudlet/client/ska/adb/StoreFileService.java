@@ -3,6 +3,7 @@ package edu.cmu.sei.cloudlet.client.ska.adb;
 import android.app.Service;
 import android.content.Intent;
 import android.os.IBinder;
+import android.util.Log;
 
 import java.util.HashMap;
 
@@ -37,6 +38,7 @@ public class StoreFileService extends Service {
         // File path depends on the file we are getting.
         String fileId = intent.getStringExtra("file_id");
         String filePath = ADBConstants.ADB_FILES_PATH + mFiles.get(fileId);
+        Log.v(TAG, "Received request to store file of type " + fileId);
 
         byte[] data = FileHandler.readFromFile(filePath);
         if(SERVER_PUBLIC_KEY_ID.equals(fileId))
