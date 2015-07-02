@@ -85,17 +85,17 @@
         </activity>
 
         <service
-            android:name=".ska.adb.SaveIdToFileService"
-            android:enabled="true"
-            android:exported="true" >
-        </service>
-        <service
-            android:name=".ska.adb.StoreNetworkIdService"
-            android:enabled="true"
-            android:exported="true" >
-        </service>
-        <service
             android:name=".ska.adb.StoreFileService"
+            android:enabled="true"
+            android:exported="true" >
+        </service>
+        <service
+            android:name=".ska.adb.InDataService"
+            android:enabled="true"
+            android:exported="true" >
+        </service>
+        <service
+            android:name=".ska.adb.OutDataService"
             android:enabled="true"
             android:exported="true" >
         </service>
