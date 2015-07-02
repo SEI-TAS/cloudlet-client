@@ -33,7 +33,7 @@ import android.content.Context;
 import android.os.Bundle;
 
 /**
- * Created by Sebastián on 02-07-2015.
+ * Created by Sebastian on 02-07-2015.
  */
 public interface IInFileHandler {
     void storeFile(byte[] fileContents, String fileName, Context context);

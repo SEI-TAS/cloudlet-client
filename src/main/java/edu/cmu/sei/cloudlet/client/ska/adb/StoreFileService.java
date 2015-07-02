@@ -34,9 +34,6 @@ import android.content.Intent;
 import android.os.IBinder;
 import android.util.Log;
 
-import java.util.HashMap;
-
-import edu.cmu.sei.cloudlet.client.ibc.IBCAuthManager;
 import edu.cmu.sei.cloudlet.client.ibc.IBCDataHandler;
 import edu.cmu.sei.cloudlet.client.utils.FileHandler;
 

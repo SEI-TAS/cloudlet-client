@@ -60,7 +60,7 @@ public class FileHandler {
             folders.mkdirs();
 
             // Load the data.
-            Log.v(TAG, "Reading file.");
+            Log.v(TAG, "Reading file " + filePath);
             RandomAccessFile file = new RandomAccessFile(filePath, "r");
             byte[] buffer = new byte[(int) file.length()];
             file.read(buffer);

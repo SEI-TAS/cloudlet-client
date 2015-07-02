@@ -30,7 +30,6 @@ http://jquery.org/license
 package edu.cmu.sei.cloudlet.client.ska.adb;
 
 import android.content.Context;
-import android.os.Bundle;
 
 import org.json.JSONObject;
 
