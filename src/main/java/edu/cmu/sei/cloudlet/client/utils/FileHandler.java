@@ -19,6 +19,7 @@ public class FileHandler {
     public static void writeToFile(String filePath, byte[] data) {
         try {
             // Create the folders.
+            Log.v(TAG, "Creating folder for file " + filePath + ".");
             File folders = new File((new File(filePath)).getParent());
             folders.mkdirs();
 

@@ -94,6 +94,7 @@ public class BTMessageHandler {
             // Send the reply.
             sendMessage(id);
         }
+        // TODO: change all these commands to one file send command with the id as the data.
         else if (command.equals(CMD_FILE_MASTER_PUBLIC_KEY)) {
             Log.v(TAG, "master public key file send request");
             sendMessage(REPLY_ACK);

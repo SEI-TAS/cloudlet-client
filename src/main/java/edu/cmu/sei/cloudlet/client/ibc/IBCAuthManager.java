@@ -13,6 +13,7 @@ import java.security.cert.CertificateException;
 import java.security.cert.CertificateFactory;
 import java.security.cert.X509Certificate;
 import java.util.Collection;
+import java.util.HashMap;
 import java.util.NoSuchElementException;
 
 import edu.cmu.sei.cloudlet.client.utils.FileHandler;
@@ -26,10 +27,24 @@ public class IBCAuthManager {
 
     private static final String IBC_FOLDER_PATH = FileHandler.APP_BASE_FOLDER + "ibc/";
 
+    // TODO: see how to make this generic, even though it still can be used later when needed.
     public static final String SERVER_CERTIFICATE_PATH = IBC_FOLDER_PATH + "server_certificate.cer";
     public static final String DEVICE_CERTIFICATE_PATH = IBC_FOLDER_PATH + "device_certificate.cer";
     public static final String DEVICE_PRIVATE_KEY_PATH = IBC_FOLDER_PATH + "device_key.prv";
     public static final String SERVER_PUBLIC_KEY_PATH = IBC_FOLDER_PATH + "server_key.pub";
+
+    public static final String SERVER_PUBLIC_KEY_ID = "server_public_key";
+    public static final String DEVICE_PRIVATE_KEY_ID = "device_private_key";
+    public static final String SERVER_CERTIFICATE_ID = "server_certificate";
+    public static final String DEVICE_CERTIFICATE_ID = "device_certificate";
+
+    private static HashMap<String, String> mFiles = new HashMap<String, String>();
+    static {
+        mFiles.put(SERVER_PUBLIC_KEY_ID, SERVER_PUBLIC_KEY_PATH);
+        mFiles.put(DEVICE_PRIVATE_KEY_ID, DEVICE_PRIVATE_KEY_PATH);
+        mFiles.put(SERVER_CERTIFICATE_ID, SERVER_CERTIFICATE_PATH);
+        mFiles.put(DEVICE_CERTIFICATE_ID, DEVICE_CERTIFICATE_PATH);
+    }
 
     /**
      * Returns the ID for the device.
@@ -38,6 +53,15 @@ public class IBCAuthManager {
     public static String getDeviceId(Context context) {
         String androidId = Settings.Secure.getString(context.getContentResolver(), Settings.Secure.ANDROID_ID);
         return androidId;
+    }
+
+    /**
+     * Stores an IBC related file.
+     * @param fileContents
+     */
+    public static void storeFile(byte[] fileContents, String fileId) {
+        Log.v(TAG, "File contents for file " + fileId + ": " + new String(fileContents));
+        FileHandler.writeToFile(mFiles.get(fileId), fileContents);
     }
 
     /**
