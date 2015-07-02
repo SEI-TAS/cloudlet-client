@@ -35,6 +35,10 @@ import android.os.Bundle;
 import android.os.IBinder;
 import android.util.Log;
 
+import org.json.JSONException;
+import org.json.JSONObject;
+
+import edu.cmu.sei.cloudlet.client.ibc.IBCDataHandler;
 import edu.cmu.sei.cloudlet.client.utils.FileHandler;
 
 public class OutDataService extends Service {
@@ -47,7 +51,7 @@ public class OutDataService extends Service {
 
     public OutDataService() {
         // TODO: this adds an unnecessary dependency here. Should be moved out somehow.
-        mDataHandler = new IBCOutDataHandler();
+        mDataHandler = new IBCDataHandler();
     }
 
     @Override
@@ -61,7 +65,16 @@ public class OutDataService extends Service {
         Bundle extras = intent.getExtras();
         Log.v(TAG, "Number of items requested: " + extras.size());
 
-        String jsonDataAsString = mDataHandler.getData(extras, this);
+        JSONObject jsonData = new JSONObject();
+        for(String key : extras.keySet()) {
+            try {
+                jsonData.put(key, extras.getString(key));
+            } catch (JSONException e) {
+                e.printStackTrace();
+            }
+        }
+
+        String jsonDataAsString = mDataHandler.getData(jsonData, this);
 
         Log.v(TAG, "Writing to file.");
         FileHandler.writeToFile(OUT_FILE_PATH, jsonDataAsString);

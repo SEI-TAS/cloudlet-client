@@ -35,6 +35,11 @@ import android.os.Bundle;
 import android.os.IBinder;
 import android.util.Log;
 
+import org.json.JSONException;
+import org.json.JSONObject;
+
+import edu.cmu.sei.cloudlet.client.ibc.IBCDataHandler;
+
 public class InDataService extends Service {
     private final String TAG = "InDataService";
 
@@ -43,7 +48,7 @@ public class InDataService extends Service {
 
     public InDataService() {
         // TODO: this adds an unnecessary dependency here. Should be moved out somehow.
-        mDataHandler = new IBCInDataHandler();
+        mDataHandler = new IBCDataHandler();
     }
 
     @Override
@@ -57,7 +62,16 @@ public class InDataService extends Service {
         Bundle extras = intent.getExtras();
         Log.v(TAG, "Number of items: " + extras.size());
 
-        mDataHandler.handleData(extras, this);
+        JSONObject jsonData = new JSONObject();
+        for(String key : extras.keySet()) {
+            try {
+                jsonData.put(key, extras.getString(key));
+            } catch (JSONException e) {
+                e.printStackTrace();
+            }
+        }
+
+        mDataHandler.handleData(jsonData, this);
 
         // We don't need this service to run anymore.
         stopSelf();

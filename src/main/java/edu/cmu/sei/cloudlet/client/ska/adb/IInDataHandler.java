@@ -32,10 +32,12 @@ package edu.cmu.sei.cloudlet.client.ska.adb;
 import android.content.Context;
 import android.os.Bundle;
 
+import org.json.JSONObject;
+
 /**
  * Created by Sebastian on 2015-07-02.
  */
 public interface IInDataHandler {
 
-    void handleData(Bundle data, Context context);
+    void handleData(JSONObject data, Context context);
 }

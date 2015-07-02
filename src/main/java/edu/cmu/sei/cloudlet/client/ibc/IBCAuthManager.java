@@ -1,3 +1,32 @@
+/*
+KVM-based Discoverable Cloudlet (KD-Cloudlet)
+Copyright (c) 2015 Carnegie Mellon University.
+All Rights Reserved.
+
+THIS SOFTWARE IS PROVIDED "AS IS," WITH NO WARRANTIES WHATSOEVER. CARNEGIE MELLON UNIVERSITY EXPRESSLY DISCLAIMS TO THE FULLEST EXTENT PERMITTEDBY LAW ALL EXPRESS, IMPLIED, AND STATUTORY WARRANTIES, INCLUDING, WITHOUT LIMITATION, THE WARRANTIES OF MERCHANTABILITY, FITNESS FOR A PARTICULAR PURPOSE, AND NON-INFRINGEMENT OF PROPRIETARY RIGHTS.
+
+Released under a modified BSD license, please see license.txt for full terms.
+DM-0002138
+
+KD-Cloudlet includes and/or makes use of the following Third-Party Software subject to their own licenses:
+MiniMongo
+Copyright (c) 2010-2014, Steve Lacy
+All rights reserved. Released under BSD license.
+https://github.com/MiniMongo/minimongo/blob/master/LICENSE
+
+Bootstrap
+Copyright (c) 2011-2015 Twitter, Inc.
+Released under the MIT License
+https://github.com/twbs/bootstrap/blob/master/LICENSE
+
+jQuery JavaScript Library v1.11.0
+http://jquery.com/
+Includes Sizzle.js
+http://sizzlejs.com/
+Copyright 2005, 2014 jQuery Foundation, Inc. and other contributors
+Released under the MIT license
+http://jquery.org/license
+*/
 package edu.cmu.sei.cloudlet.client.ibc;
 
 import android.content.Context;
@@ -27,25 +56,6 @@ public class IBCAuthManager {
 
     private static final String IBC_FOLDER_PATH = FileHandler.APP_BASE_FOLDER + "ibc/";
 
-    // TODO: see how to make this generic, even though it still can be used later when needed.
-    public static final String SERVER_CERTIFICATE_PATH = IBC_FOLDER_PATH + "server_certificate.cer";
-    public static final String DEVICE_CERTIFICATE_PATH = IBC_FOLDER_PATH + "device_certificate.cer";
-    public static final String DEVICE_PRIVATE_KEY_PATH = IBC_FOLDER_PATH + "device_key.prv";
-    public static final String SERVER_PUBLIC_KEY_PATH = IBC_FOLDER_PATH + "server_key.pub";
-
-    public static final String SERVER_PUBLIC_KEY_ID = "server_public_key";
-    public static final String DEVICE_PRIVATE_KEY_ID = "device_private_key";
-    public static final String SERVER_CERTIFICATE_ID = "server_certificate";
-    public static final String DEVICE_CERTIFICATE_ID = "device_certificate";
-
-    private static HashMap<String, String> mFiles = new HashMap<String, String>();
-    static {
-        mFiles.put(SERVER_PUBLIC_KEY_ID, SERVER_PUBLIC_KEY_PATH);
-        mFiles.put(DEVICE_PRIVATE_KEY_ID, DEVICE_PRIVATE_KEY_PATH);
-        mFiles.put(SERVER_CERTIFICATE_ID, SERVER_CERTIFICATE_PATH);
-        mFiles.put(DEVICE_CERTIFICATE_ID, DEVICE_CERTIFICATE_PATH);
-    }
-
     /**
      * Returns the ID for the device.
      * @return a String representing a unique id for the device.
@@ -61,66 +71,19 @@ public class IBCAuthManager {
      */
     public static void storeFile(byte[] fileContents, String fileId) {
         Log.v(TAG, "File contents for file " + fileId + ": " + new String(fileContents));
-        FileHandler.writeToFile(mFiles.get(fileId), fileContents);
-    }
-
-    /**
-     * Stores the server certificate so it can be used for WPA2-Enterprise.
-     * @param fileContents
-     */
-    public static void storeServerCertificate(byte[] fileContents) {
-        Log.v(TAG, "Certificate: " + new String(fileContents));
-        FileHandler.writeToFile(SERVER_CERTIFICATE_PATH, fileContents);
-    }
-
-    /**
-     * Stores the server certificate so it can be used for WPA2-Enterprise.
-     * @param fileContents
-     */
-    public static void storeDeviceCertificate(byte[] fileContents) {
-        Log.v(TAG, "Certificate: " + new String(fileContents));
-        FileHandler.writeToFile(DEVICE_CERTIFICATE_PATH, fileContents);
-    }
-
-    /**
-     * Stores the device private IBC key.
-     * @param fileContents
-     */
-    public static void storeDevicePrivateKey(byte[] fileContents) {
-        Log.v(TAG, "Device's Private Key: " + new String(fileContents));
-        FileHandler.writeToFile(DEVICE_PRIVATE_KEY_PATH, fileContents);
-    }
-
-    /**
-     * Stores the server's public key.
-     * @param fileContents
-     */
-    public static void storeServerPublicKey(byte[] fileContents) {
-        Log.v(TAG, "Server's Public Key: " + new String(fileContents));
-        FileHandler.writeToFile(SERVER_PUBLIC_KEY_PATH, fileContents);
-    }
-
-    /**
-     * Generates the password to be used when authenticating.
-     * @return
-     */
-    private static String generateAuthPassword() {
-        String password = "";
-        // TODO: actually call the IBE lib here.
-        // password = sIBELib.sign(deviceId, deviceCertificate).
-        return password;
+        FileHandler.writeToFile(IBC_FOLDER_PATH + fileId, fileContents);
     }
 
     /**
      * Creates a WPA2-Enterprise configuration with the current files.
      * @param context
      */
-    public static void setupWifiProfile(String ssid, Context context) {
+    public static void setupWifiProfile(String ssid, String serverFileName, String password, Context context) {
         // Create a cert object from the certificate file.
         X509Certificate serverCertificate = null;
         try {
             CertificateFactory certificateGenerator = CertificateFactory.getInstance("X.509");
-            Collection certs = certificateGenerator.generateCertificates(new FileInputStream(SERVER_CERTIFICATE_PATH));
+            Collection certs = certificateGenerator.generateCertificates(new FileInputStream(IBC_FOLDER_PATH + serverFileName));
 
             // We know our file will have only 1 certificate, so we get the first one.
             serverCertificate = (X509Certificate) certs.iterator().next();
@@ -144,7 +107,8 @@ public class IBCAuthManager {
         enterpriseConfig.setEapMethod(WifiEnterpriseConfig.Eap.TTLS);
         enterpriseConfig.setCaCertificate(serverCertificate);
         enterpriseConfig.setPhase2Method(WifiEnterpriseConfig.Phase2.PAP);
-        enterpriseConfig.setPassword(generateAuthPassword());
+        enterpriseConfig.setIdentity(getDeviceId(context));
+        enterpriseConfig.setPassword(password);
         wifiConfig.enterpriseConfig = enterpriseConfig;
 
         // Store the profile.
