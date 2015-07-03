@@ -131,22 +131,28 @@ public class BTMessageHandler {
                 String data = mOutDataHandler.getData(parsedMessage, mContext);
                 Log.v(TAG, data);
                 sendMessage(data);
+                Log.v(TAG, "Finished sending data");
             }
             else if(command.equals(CMD_RECEIVE_DATA)) {
                 Log.v(TAG, "Receiving data");
                 Log.v(TAG, parsedMessage.toString());
                 mInDataHandler.handleData(parsedMessage, mContext);
+
+                sendMessage(REPLY_ACK);
+                Log.v(TAG, "Finished processing received data");
             }
             else if(command.equals(CMD_RECEIVE_FILE)) {
                 Log.v(TAG, "Receiving a file");
                 String fileName = parsedMessage.getString("file_id");
                 Log.v(TAG, fileName);
+                sendMessage(REPLY_ACK);
 
                 // Get the actual file data contents.
-                sendMessage(REPLY_ACK);
                 byte[] fileData = receiveFile();
+                sendMessage(REPLY_ACK);
 
                 mFileDataHandler.storeFile(fileData, fileName, mContext);
+                Log.v(TAG, "Finished processing received file");
             }
         } catch (JSONException e) {
             e.printStackTrace();
