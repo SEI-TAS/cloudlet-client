@@ -41,8 +41,6 @@ import java.io.FileNotFoundException;
 import java.security.cert.CertificateException;
 import java.security.cert.CertificateFactory;
 import java.security.cert.X509Certificate;
-import java.util.Collection;
-import java.util.HashMap;
 import java.util.NoSuchElementException;
 
 import edu.cmu.sei.cloudlet.client.utils.FileHandler;
@@ -83,17 +81,19 @@ public class IBCAuthManager {
         X509Certificate serverCertificate = null;
         try {
             CertificateFactory certificateGenerator = CertificateFactory.getInstance("X.509");
-            Collection certs = certificateGenerator.generateCertificates(new FileInputStream(IBC_FOLDER_PATH + serverFileName));
-
-            // We know our file will have only 1 certificate, so we get the first one.
-            serverCertificate = (X509Certificate) certs.iterator().next();
+            serverCertificate = (X509Certificate) certificateGenerator.generateCertificate(new FileInputStream(IBC_FOLDER_PATH + serverFileName));
+            Log.v(TAG, "Certificate: " + serverCertificate);
         } catch (CertificateException e) {
+            Log.e(TAG, "Error loading certificate");
             e.printStackTrace();
+            return;
         } catch (FileNotFoundException e) {
+            Log.e(TAG, "Error loading certificate");
             e.printStackTrace();
+            return;
         } catch (NoSuchElementException e) {
-            e.printStackTrace();
             Log.e(TAG, "No valid certificates found");
+            e.printStackTrace();
             return;
         }
 
@@ -102,19 +102,36 @@ public class IBCAuthManager {
         wifiConfig.SSID = ssid;
 
         // Configure EAP-TTLS and PAP specific parameters.
-        wifiConfig.allowedKeyManagement.set(WifiConfiguration.KeyMgmt.WPA_EAP);
-        WifiEnterpriseConfig enterpriseConfig = new WifiEnterpriseConfig();
-        enterpriseConfig.setEapMethod(WifiEnterpriseConfig.Eap.TTLS);
-        enterpriseConfig.setCaCertificate(serverCertificate);
-        enterpriseConfig.setPhase2Method(WifiEnterpriseConfig.Phase2.PAP);
-        enterpriseConfig.setIdentity(getDeviceId(context));
-        enterpriseConfig.setPassword(password);
-        wifiConfig.enterpriseConfig = enterpriseConfig;
+        try {
+            // Set security methods to use.
+            wifiConfig.allowedKeyManagement.set(WifiConfiguration.KeyMgmt.WPA_EAP);
+            WifiEnterpriseConfig enterpriseConfig = new WifiEnterpriseConfig();
+            enterpriseConfig.setEapMethod(WifiEnterpriseConfig.Eap.TTLS);
+            enterpriseConfig.setPhase2Method(WifiEnterpriseConfig.Phase2.PAP);
 
-        // Store the profile.
-        // TODO: test if this fails when there is already a profile with the same SSID.
-        WifiManager wifiManager = (WifiManager) context.getSystemService(Context.WIFI_SERVICE);
-        wifiManager.setWifiEnabled(true);
-        wifiManager.addNetwork(wifiConfig);
+            // Set client and server credentials.
+            enterpriseConfig.setIdentity(getDeviceId(context));
+            enterpriseConfig.setCaCertificate(serverCertificate);
+            enterpriseConfig.setPassword(password);
+
+            // Store the security profile in the Wi-Fi profile.
+            wifiConfig.enterpriseConfig = enterpriseConfig;
+
+            // Store the profile.
+            // TODO: test if this fails when there is already a profile with the same SSID.
+            WifiManager wifiManager = (WifiManager) context.getSystemService(Context.WIFI_SERVICE);
+            wifiManager.setWifiEnabled(true);
+            int netword_profile_id = wifiManager.addNetwork(wifiConfig);
+            if(netword_profile_id == -1) {
+                Log.e(TAG, "Wi-Fi configuration could not be stored.");
+            }
+            else {
+                Log.v(TAG, "Wi-Fi configuration stored with id " + netword_profile_id);
+            }
+        } catch (Exception e) {
+            Log.e(TAG, "Error creating Wi-Fi profile.");
+            e.printStackTrace();
+            return;
+        }
     }
 }
