@@ -19,7 +19,7 @@
         android:layout_height="wrap_content"
         android:background="#FFFFFF"
         android:gravity="center"
-        android:text="Select process"
+        android:text="Select Process"
         android:textAppearance="?android:attr/textAppearanceMedium"
         android:textColor="#000000" />
 	
@@ -34,7 +34,7 @@
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
 android:text="List Cloudlets"
-            android:layout_alignParentBottom="true"
+            android:layout_centerVertical="true"
             android:layout_centerHorizontal="true" />
 
     </RelativeLayout>

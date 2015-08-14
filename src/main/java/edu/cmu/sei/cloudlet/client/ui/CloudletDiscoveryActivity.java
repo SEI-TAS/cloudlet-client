@@ -204,7 +204,7 @@ public class CloudletDiscoveryActivity extends Activity implements ServiceListen
 			AlertDialog alertDialog = new AlertDialog.Builder(this).create();  
 			Log.d(LOG_TAG, "Displaying alert");
 			alertDialog.setTitle("Cloudlet Discovery Failed");  
-			alertDialog.setMessage("No Cloudlets in Proximity of this Device");  
+			alertDialog.setMessage("No Cloudlets in proximity of this device");
 			alertDialog.setButton("OK", new DialogInterface.OnClickListener() {  
 				public void onClick(DialogInterface dialog, int which) {  
 					return;

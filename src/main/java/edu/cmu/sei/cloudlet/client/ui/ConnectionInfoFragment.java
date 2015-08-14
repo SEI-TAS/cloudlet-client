@@ -71,11 +71,7 @@ public class ConnectionInfoFragment extends Fragment
         wifiSsidText = (TextView) inflatedView.findViewById(R.id.wifiSsid);       
         wifiIpText = (TextView) inflatedView.findViewById(R.id.wifiIp);
         updateWifiInfo();
-        
-        // Cloudlet info.
-        cloudletNameText = (TextView) inflatedView.findViewById(R.id.cloudlet);
-        cloudletIpText = (TextView) inflatedView.findViewById(R.id.cloudletIp);
-        
+
         return inflatedView;
     }
     
