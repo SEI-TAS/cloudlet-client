@@ -27,12 +27,11 @@ Copyright 2005, 2014 jQuery Foundation, Inc. and other contributors
 Released under the MIT license
 http://jquery.org/license
 */
-package edu.cmu.sei.cloudlet.client.ibc;
+package edu.cmu.sei.cloudlet.client.security;
 
 import android.content.Context;
 import android.net.wifi.WifiConfiguration;
 import android.net.wifi.WifiManager;
-import android.provider.Settings;
 import android.util.Log;
 import android.net.wifi.WifiEnterpriseConfig;
 
@@ -43,45 +42,27 @@ import java.security.cert.CertificateFactory;
 import java.security.cert.X509Certificate;
 import java.util.NoSuchElementException;
 
-import edu.cmu.sei.cloudlet.client.utils.FileHandler;
-
 /**
- * Assumes device can store information of only 1 cloudlet at one time.
  * Created by Sebastian on 2015-05-27.
  */
-public class IBCAuthManager {
-    private static final String TAG = "IBCAuthManager";
-
-    private static final String IBC_FOLDER_PATH = FileHandler.APP_BASE_FOLDER + "ibc/";
+public class WifiProfileManager {
+    private static final String TAG = "WifiProfileManager";
 
     /**
-     * Returns the ID for the device.
-     * @return a String representing a unique id for the device.
+     * Creates a WPA2-Enterprise configuration with the give data.
+     * @param ssid the network ssid
+     * @param serverFilePath the path to the server certifiate to use
+     * @param deviceId the device id to be set
+     * @param password the device password to be set
+     * @param context Android's context
      */
-    public static String getDeviceId(Context context) {
-        String androidId = Settings.Secure.getString(context.getContentResolver(), Settings.Secure.ANDROID_ID);
-        return androidId;
-    }
-
-    /**
-     * Stores an IBC related file.
-     * @param fileContents
-     */
-    public static void storeFile(byte[] fileContents, String fileId) {
-        Log.v(TAG, "File contents for file " + fileId + ": " + new String(fileContents));
-        FileHandler.writeToFile(IBC_FOLDER_PATH + fileId, fileContents);
-    }
-
-    /**
-     * Creates a WPA2-Enterprise configuration with the current files.
-     * @param context
-     */
-    public static void setupWifiProfile(String ssid, String serverFileName, String password, Context context) {
+    public static void setupWifiProfile(String ssid, String serverFilePath, String deviceId,
+                                        String password, Context context) {
         // Create a cert object from the certificate file.
         X509Certificate serverCertificate = null;
         try {
             CertificateFactory certificateGenerator = CertificateFactory.getInstance("X.509");
-            serverCertificate = (X509Certificate) certificateGenerator.generateCertificate(new FileInputStream(IBC_FOLDER_PATH + serverFileName));
+            serverCertificate = (X509Certificate) certificateGenerator.generateCertificate(new FileInputStream(serverFilePath));
             Log.v(TAG, "Certificate: " + serverCertificate);
         } catch (CertificateException e) {
             Log.e(TAG, "Error loading certificate");
@@ -110,7 +91,7 @@ public class IBCAuthManager {
             enterpriseConfig.setPhase2Method(WifiEnterpriseConfig.Phase2.PAP);
 
             // Set client and server credentials.
-            enterpriseConfig.setIdentity(getDeviceId(context));
+            enterpriseConfig.setIdentity(deviceId);
             enterpriseConfig.setCaCertificate(serverCertificate);
             enterpriseConfig.setPassword(password);
 
@@ -118,7 +99,6 @@ public class IBCAuthManager {
             wifiConfig.enterpriseConfig = enterpriseConfig;
 
             // Store the profile.
-            // TODO: test if this fails when there is already a profile with the same SSID.
             WifiManager wifiManager = (WifiManager) context.getSystemService(Context.WIFI_SERVICE);
             wifiManager.setWifiEnabled(true);
             int netword_profile_id = wifiManager.addNetwork(wifiConfig);
@@ -131,7 +111,6 @@ public class IBCAuthManager {
         } catch (Exception e) {
             Log.e(TAG, "Error creating Wi-Fi profile.");
             e.printStackTrace();
-            return;
         }
     }
 }

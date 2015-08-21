@@ -42,6 +42,7 @@ import android.view.ViewGroup;
 import android.widget.*;
 import edu.cmu.sei.ams.cloudlet.*;
 import edu.cmu.sei.ams.cloudlet.android.CloudletCallback;
+import edu.cmu.sei.ams.cloudlet.android.CredentialsManager;
 import edu.cmu.sei.ams.cloudlet.android.FindCloudletByRankAsyncTask;
 import edu.cmu.sei.ams.cloudlet.android.StartServiceAsyncTask;
 import edu.cmu.sei.ams.cloudlet.rank.CpuBasedRanker;
@@ -125,7 +126,7 @@ public class CloudletSelectionActivity extends Activity
             }
         });
 
-        new GetServicesListAsync().execute();
+        new GetServicesListAsync(this).execute();
     }
 
 
@@ -140,10 +141,12 @@ public class CloudletSelectionActivity extends Activity
     private class FindCloudletAsync extends AsyncTask<Void, Void, Cloudlet>
     {
         private String service;
+        private Context context;
 
-        private FindCloudletAsync(String service)
+        public FindCloudletAsync(String service, Context context)
         {
             this.service = service;
+            this.context = context;
         }
 
         @Override
@@ -160,7 +163,9 @@ public class CloudletSelectionActivity extends Activity
         @Override
         protected Cloudlet doInBackground(Void... voids)
         {
-            return CloudletFinder.findCloudletForService(service, new CpuBasedRanker());
+            CloudletFinder finder = new CloudletFinder();
+            finder.enableEncryption(CredentialsManager.getDeviceId(this.context), CredentialsManager.loadDataFromFile("password"));
+            return finder.findCloudletForService(service, new CpuBasedRanker());
         }
 
         @Override
@@ -264,8 +269,12 @@ public class CloudletSelectionActivity extends Activity
 
     private class GetServicesListAsync extends AsyncTask<Void, Void, List<String>>
     {
+        private Context context;
 
-        private Exception e;
+        public GetServicesListAsync(Context context)
+        {
+            this.context = context;
+        }
 
         @Override
         protected void onPreExecute()
@@ -281,7 +290,9 @@ public class CloudletSelectionActivity extends Activity
         @Override
         protected List<String> doInBackground(Void... voids)
         {
-            return CloudletFinder.findAllNearbyServices();
+            CloudletFinder finder = new CloudletFinder();
+            finder.enableEncryption(CredentialsManager.getDeviceId(this.context), CredentialsManager.loadDataFromFile("password"));
+            return finder.findAllNearbyServices();
         }
 
         @Override

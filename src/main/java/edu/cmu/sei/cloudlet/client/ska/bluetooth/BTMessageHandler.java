@@ -40,7 +40,7 @@ import java.io.IOException;
 import java.io.InputStream;
 import java.io.OutputStream;
 
-import edu.cmu.sei.cloudlet.client.ibc.IBCDataHandler;
+import edu.cmu.sei.cloudlet.client.security.PairingHandler;
 import edu.cmu.sei.cloudlet.client.ska.adb.IInDataHandler;
 import edu.cmu.sei.cloudlet.client.ska.adb.IOutDataHandler;
 import edu.cmu.sei.cloudlet.client.ska.adb.IInFileHandler;
@@ -80,7 +80,7 @@ public class BTMessageHandler {
         }
 
         // TODO: this adds an unnecessary dependency here. Should be moved out somehow.
-        mInDataHandler = new IBCDataHandler();
+        mInDataHandler = new PairingHandler();
         mOutDataHandler = (IOutDataHandler) mInDataHandler;
         mFileDataHandler = (IInFileHandler) mInDataHandler;
     }

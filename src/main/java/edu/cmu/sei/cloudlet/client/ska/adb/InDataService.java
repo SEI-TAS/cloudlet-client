@@ -38,7 +38,7 @@ import android.util.Log;
 import org.json.JSONException;
 import org.json.JSONObject;
 
-import edu.cmu.sei.cloudlet.client.ibc.IBCDataHandler;
+import edu.cmu.sei.cloudlet.client.security.PairingHandler;
 
 public class InDataService extends Service {
     private final String TAG = "InDataService";
@@ -48,7 +48,7 @@ public class InDataService extends Service {
 
     public InDataService() {
         // TODO: this adds an unnecessary dependency here. Should be moved out somehow.
-        mDataHandler = new IBCDataHandler();
+        mDataHandler = new PairingHandler();
     }
 
     @Override

@@ -34,7 +34,7 @@ import android.content.Intent;
 import android.os.IBinder;
 import android.util.Log;
 
-import edu.cmu.sei.cloudlet.client.ibc.IBCDataHandler;
+import edu.cmu.sei.cloudlet.client.security.PairingHandler;
 import edu.cmu.sei.cloudlet.client.utils.FileHandler;
 
 public class StoreFileService extends Service {
@@ -45,7 +45,7 @@ public class StoreFileService extends Service {
 
     public StoreFileService() {
         // TODO: this adds an unnecessary dependency here. Should be moved out somehow.
-        mFileHandler = new IBCDataHandler();
+        mFileHandler = new PairingHandler();
     }
 
     @Override

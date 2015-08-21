@@ -14,8 +14,8 @@ import android.view.View;
 import android.widget.Switch;
 import android.widget.TextView;
 
+import edu.cmu.sei.ams.cloudlet.android.CredentialsManager;
 import edu.cmu.sei.cloudlet.client.R;
-import edu.cmu.sei.cloudlet.client.ibc.IBCAuthManager;
 import edu.cmu.sei.cloudlet.client.ska.bluetooth.BTSKAPairingService;
 
 public class PairingActivity extends Activity {
@@ -55,7 +55,7 @@ public class PairingActivity extends Activity {
 
         mDiscoverableSwitch = (Switch) findViewById(R.id.discoverySwitch);
         mIdLabel = (TextView) findViewById(R.id.idLabel);
-        mIdLabel.setText(IBCAuthManager.getDeviceId(this));
+        mIdLabel.setText(CredentialsManager.getDeviceId(this));
 
         mPairingService = new BTSKAPairingService(this);
     }

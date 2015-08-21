@@ -43,6 +43,7 @@ import javax.jmdns.ServiceListener;
 import edu.cmu.sei.ams.cloudlet.Cloudlet;
 import edu.cmu.sei.ams.cloudlet.CloudletFinder;
 import edu.cmu.sei.ams.cloudlet.android.CloudletCallback;
+import edu.cmu.sei.ams.cloudlet.android.CredentialsManager;
 import edu.cmu.sei.ams.cloudlet.android.FindCloudletsAsyncTask;
 import edu.cmu.sei.cloudlet.client.R;
 import edu.cmu.sei.cloudlet.client.CurrentCloudlet;
@@ -147,7 +148,9 @@ public class CloudletDiscoveryActivity extends Activity implements ServiceListen
 
 	private List<Cloudlet> doZeroConfSetup()
 	{
-        return CloudletFinder.findCloudlets();
+		CloudletFinder finder = new CloudletFinder();
+		finder.enableEncryption(CredentialsManager.getDeviceId(this), CredentialsManager.loadDataFromFile("password"));
+        return finder.findCloudlets();
 	}
 
 	private void invokeOverlayDetailsActivity (int selectedCloudlet) 
