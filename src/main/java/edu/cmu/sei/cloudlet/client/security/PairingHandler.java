@@ -103,6 +103,9 @@ public class PairingHandler implements IInDataHandler, IOutDataHandler, IInFileH
                 String password = data.getString(PASSWORD);
                 Log.v(TAG, "Received password: " + password);
 
+                // Store password for future use.
+                CredentialsManager.storeFile(password.getBytes(), "password");
+
                 // A network profile will only be created if we got all three data in the same message.
                 if(!networkId.equals("") && !certName.equals("") && !password.equals("")) {
                     String serverCertificatePath = CredentialsManager.CREDENTIALS_FOLDER_PATH + certName;
