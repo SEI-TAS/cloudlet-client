@@ -19,7 +19,7 @@
 	    android:id="@+id/appListTitle"
 	    android:layout_width="fill_parent" 
 	    android:layout_height="wrap_content"     
-	    android:text="Apps in Cloudlet"
+	    android:text="Apps in Cloudlets"
 	    android:background="#FFFFFF"
 	    android:textColor="#000000"
 	    android:gravity="center"
