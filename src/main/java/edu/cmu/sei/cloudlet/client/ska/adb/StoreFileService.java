@@ -35,7 +35,7 @@ import android.os.IBinder;
 import android.util.Log;
 
 import edu.cmu.sei.cloudlet.client.security.PairingHandler;
-import edu.cmu.sei.cloudlet.client.utils.FileHandler;
+import edu.cmu.sei.ams.cloudlet.android.utils.FileHandler;
 
 public class StoreFileService extends Service {
     private final String TAG = "StoreFileService";
