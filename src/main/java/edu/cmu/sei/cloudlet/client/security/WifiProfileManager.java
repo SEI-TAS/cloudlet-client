@@ -30,6 +30,7 @@ http://jquery.org/license
 package edu.cmu.sei.cloudlet.client.security;
 
 import android.content.Context;
+import android.content.Intent;
 import android.net.wifi.WifiConfiguration;
 import android.net.wifi.WifiManager;
 import android.util.Log;
@@ -88,6 +89,22 @@ public class WifiProfileManager {
         wifiManager.setWifiEnabled(true);
         int netword_profile_id = wifiManager.addNetwork(wifiConfig);
         if(netword_profile_id == -1) {
+            // Android won't give us the detailed error. The issue may be that the keystore is locked.
+            // In modern Android OSs, the only way the keystore can be locked is if the user does
+            // not have a pattern, password or PIN. We will call an asynchronous activity to
+            // unlock the keystore, but it will actually prompt the user to set up a pattern,
+            // password or PIN. After the user does this, the keystore will be unlocked while the
+            // pairing service is in use. However, since the activity to set this up is asynchronous,
+            // this method will fail, and we will have to wait for our method to be called again
+            // so it can actually store the profile. For more details, see:
+            // http://nelenkov.blogspot.cl/2012/05/storing-application-secrets-in-androids.html
+            Intent unlockIntent = new Intent("com.android.credentials.UNLOCK");
+            unlockIntent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
+            context.startActivity(unlockIntent);
+
+            // There is no way the user will be fast enough to set things up, and it is not easy
+            // to sleep since we don't know how long it will take him. Therefore, just fail
+            // and hope next time we are called the user has its pattern, PIN or password set up.
             String errorMessage = "Wi-Fi configuration could not be stored.";
             Log.e(TAG, errorMessage);
             throw new RuntimeException(errorMessage);
