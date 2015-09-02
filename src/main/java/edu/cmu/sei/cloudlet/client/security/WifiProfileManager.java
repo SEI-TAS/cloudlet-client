@@ -43,6 +43,7 @@ import java.security.cert.X509Certificate;
 import java.util.NoSuchElementException;
 
 /**
+ * Handles the creation of Wi-Fi profiles for secure communication with a cloudlet.
  * Created by Sebastian on 2015-05-27.
  */
 public class WifiProfileManager {
@@ -56,61 +57,43 @@ public class WifiProfileManager {
      * @param password the device password to be set
      * @param context Android's context
      */
-    public static void setupWifiProfile(String ssid, String serverFilePath, String deviceId,
-                                        String password, Context context) {
+    public static void setupWPA2WifiProfile(String ssid, String serverFilePath, String deviceId,
+                                        String password, Context context) throws CertificateException, FileNotFoundException {
         // Create a cert object from the certificate file.
-        X509Certificate serverCertificate = null;
-        try {
-            CertificateFactory certificateGenerator = CertificateFactory.getInstance("X.509");
-            serverCertificate = (X509Certificate) certificateGenerator.generateCertificate(new FileInputStream(serverFilePath));
-            Log.v(TAG, "Certificate: " + serverCertificate);
-        } catch (CertificateException e) {
-            Log.e(TAG, "Error loading certificate");
-            e.printStackTrace();
-            return;
-        } catch (FileNotFoundException e) {
-            Log.e(TAG, "Error loading certificate");
-            e.printStackTrace();
-            return;
-        } catch (NoSuchElementException e) {
-            Log.e(TAG, "No valid certificates found");
-            e.printStackTrace();
-            return;
-        }
+        CertificateFactory certificateGenerator = CertificateFactory.getInstance("X.509");
+        X509Certificate serverCertificate = (X509Certificate) certificateGenerator.generateCertificate(new FileInputStream(serverFilePath));
+        Log.v(TAG, "Certificate: " + serverCertificate);
 
         // Create basic network configuration.
         WifiConfiguration wifiConfig = new WifiConfiguration();
         wifiConfig.SSID = ssid;
 
         // Configure EAP-TTLS and PAP specific parameters.
-        try {
-            // Set security methods to use.
-            wifiConfig.allowedKeyManagement.set(WifiConfiguration.KeyMgmt.WPA_EAP);
-            WifiEnterpriseConfig enterpriseConfig = new WifiEnterpriseConfig();
-            enterpriseConfig.setEapMethod(WifiEnterpriseConfig.Eap.TTLS);
-            enterpriseConfig.setPhase2Method(WifiEnterpriseConfig.Phase2.PAP);
+        // Set security methods to use.
+        wifiConfig.allowedKeyManagement.set(WifiConfiguration.KeyMgmt.WPA_EAP);
+        WifiEnterpriseConfig enterpriseConfig = new WifiEnterpriseConfig();
+        enterpriseConfig.setEapMethod(WifiEnterpriseConfig.Eap.TTLS);
+        enterpriseConfig.setPhase2Method(WifiEnterpriseConfig.Phase2.PAP);
 
-            // Set client and server credentials.
-            enterpriseConfig.setIdentity(deviceId);
-            enterpriseConfig.setCaCertificate(serverCertificate);
-            enterpriseConfig.setPassword(password);
+        // Set client and server credentials.
+        enterpriseConfig.setIdentity(deviceId);
+        enterpriseConfig.setCaCertificate(serverCertificate);
+        enterpriseConfig.setPassword(password);
 
-            // Store the security profile in the Wi-Fi profile.
-            wifiConfig.enterpriseConfig = enterpriseConfig;
+        // Store the security profile in the Wi-Fi profile.
+        wifiConfig.enterpriseConfig = enterpriseConfig;
 
-            // Store the profile.
-            WifiManager wifiManager = (WifiManager) context.getSystemService(Context.WIFI_SERVICE);
-            wifiManager.setWifiEnabled(true);
-            int netword_profile_id = wifiManager.addNetwork(wifiConfig);
-            if(netword_profile_id == -1) {
-                Log.e(TAG, "Wi-Fi configuration could not be stored.");
-            }
-            else {
-                Log.v(TAG, "Wi-Fi configuration stored with id " + netword_profile_id);
-            }
-        } catch (Exception e) {
-            Log.e(TAG, "Error creating Wi-Fi profile.");
-            e.printStackTrace();
+        // Store the profile.
+        WifiManager wifiManager = (WifiManager) context.getSystemService(Context.WIFI_SERVICE);
+        wifiManager.setWifiEnabled(true);
+        int netword_profile_id = wifiManager.addNetwork(wifiConfig);
+        if(netword_profile_id == -1) {
+            String errorMessage = "Wi-Fi configuration could not be stored.";
+            Log.e(TAG, errorMessage);
+            throw new RuntimeException(errorMessage);
+        }
+        else {
+            Log.v(TAG, "Wi-Fi configuration stored with id " + netword_profile_id);
         }
     }
 }

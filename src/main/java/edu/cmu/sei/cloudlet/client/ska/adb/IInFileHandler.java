@@ -36,5 +36,5 @@ import android.os.Bundle;
  * Created by Sebastian on 02-07-2015.
  */
 public interface IInFileHandler {
-    void storeFile(byte[] fileContents, String fileName, Context context);
+    String storeFile(byte[] fileContents, String fileName, Context context);
 }

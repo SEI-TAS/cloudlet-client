@@ -61,7 +61,11 @@ public class StoreFileService extends Service {
         Log.v(TAG, "Received request to store file: " + fileId);
 
         byte[] data = FileHandler.readFromFile(filePath);
-        mFileHandler.storeFile(data, fileId, this);
+        String result = mFileHandler.storeFile(data, fileId, this);
+
+        Log.v(TAG, "Writing result to file.");
+        FileHandler.writeToFile(ADBConstants.OUT_FILE_PATH, result);
+        Log.v(TAG, "Finished writing result to file.");
 
         // We don't need this service to run anymore.
         stopSelf();

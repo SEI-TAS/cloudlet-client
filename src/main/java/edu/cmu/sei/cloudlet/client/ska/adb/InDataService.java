@@ -38,6 +38,7 @@ import android.util.Log;
 import org.json.JSONException;
 import org.json.JSONObject;
 
+import edu.cmu.sei.ams.cloudlet.android.utils.FileHandler;
 import edu.cmu.sei.cloudlet.client.security.PairingHandler;
 
 public class InDataService extends Service {
@@ -71,7 +72,11 @@ public class InDataService extends Service {
             }
         }
 
-        mDataHandler.handleData(jsonData, this);
+        String result = mDataHandler.handleData(jsonData, this);
+
+        Log.v(TAG, "Writing result to file.");
+        FileHandler.writeToFile(ADBConstants.OUT_FILE_PATH, result);
+        Log.v(TAG, "Finished writing result to file.");
 
         // We don't need this service to run anymore.
         stopSelf();

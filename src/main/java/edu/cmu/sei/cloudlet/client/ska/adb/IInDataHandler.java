@@ -38,5 +38,5 @@ import org.json.JSONObject;
  */
 public interface IInDataHandler {
 
-    void handleData(JSONObject data, Context context);
+    String handleData(JSONObject data, Context context);
 }

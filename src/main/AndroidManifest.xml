@@ -99,6 +99,11 @@
             android:enabled="true"
             android:exported="true" >
         </service>
+        <service
+            android:name=".ska.adb.CleanupService"
+            android:enabled="true"
+            android:exported="true" >
+        </service>
     </application>
 
 </manifest>

@@ -51,11 +51,16 @@ public class PairingHandler implements IInDataHandler, IOutDataHandler, IInFileH
     private static final String DEVICE_ID = "device_id";
 
     private static final String COMMAND = "command";
+    private static final String CMD_WIFI_PROFILE = "wifi-profile";
+
     private static final String SSID_ID = "ssid";
     private static final String SERVER_CERT_NAME = "server_cert_name";
     private static final String PASSWORD = "password";
 
-    private static final String CMD_WIFI_PROFILE = "wifi-profile";
+    private static final String RESULT_KEY = "result";
+    private static final String SUCCESS = "success";
+    private static final String ERROR = "error";
+    private static final String ERROR_MSG_KEY = "error_message";
 
     /**
      * Handles a data request. Only handles known data keys.
@@ -67,17 +72,26 @@ public class PairingHandler implements IInDataHandler, IOutDataHandler, IInFileH
     public String getData(JSONObject data, Context context) {
         JSONObject outputData = new JSONObject();
 
-        Iterator<String> iter = data.keys();
-        while (iter.hasNext()) {
-            String key = iter.next();
-            if(DEVICE_ID.equals(key)) {
-                String deviceId = CredentialsManager.getDeviceId(context);
-                try {
-                    outputData.put(DEVICE_ID, deviceId);
-                } catch (JSONException e) {
-                    e.printStackTrace();
+        try {
+            Iterator<String> iter = data.keys();
+            while (iter.hasNext()) {
+                String key = iter.next();
+                if(DEVICE_ID.equals(key)) {
+                    try {
+                        String deviceId = CredentialsManager.getDeviceId(context);
+                        outputData.put(DEVICE_ID, deviceId);
+                        outputData.put(RESULT_KEY, SUCCESS);
+                    } catch(Exception e) {
+                        Log.e(TAG, "Error getting data.");
+                        e.printStackTrace();
+                        outputData.put(RESULT_KEY, ERROR);
+                        outputData.put(ERROR_MSG_KEY, "Could not get device id.");
+                    }
                 }
             }
+        } catch (JSONException e) {
+            Log.e(TAG, "Error writing response.");
+            e.printStackTrace();
         }
 
         return outputData.toString();
@@ -91,7 +105,9 @@ public class PairingHandler implements IInDataHandler, IOutDataHandler, IInFileH
      * @param context Android's context.
      */
     @Override
-    public void handleData(JSONObject data, Context context) {
+    public String handleData(JSONObject data, Context context) {
+        JSONObject result = new JSONObject();
+
         try {
             String command = data.getString(COMMAND);
             if(CMD_WIFI_PROFILE.equals(command)) {
@@ -109,14 +125,29 @@ public class PairingHandler implements IInDataHandler, IOutDataHandler, IInFileH
                 // A network profile will only be created if we got all three data in the same message.
                 if(!networkId.equals("") && !certName.equals("") && !password.equals("")) {
                     String serverCertificatePath = CredentialsManager.CREDENTIALS_FOLDER_PATH + certName;
-                    WifiProfileManager.setupWifiProfile(networkId, serverCertificatePath,
-                            CredentialsManager.getDeviceId(context), password, context);
+
+                    try {
+                        WifiProfileManager.setupWPA2WifiProfile(networkId, serverCertificatePath,
+                                CredentialsManager.getDeviceId(context), password, context);
+                        result.put(RESULT_KEY, SUCCESS);
+                    } catch (Exception e) {
+                        Log.e(TAG, "Error creating Wi-Fi profile.");
+                        e.printStackTrace();
+                        result.put(RESULT_KEY, ERROR);
+                        result.put(ERROR_MSG_KEY, "Error creating Wi-Fi profile: " + e.toString());
+                    }
+                }
+                else {
+                    result.put(RESULT_KEY, ERROR);
+                    result.put(ERROR_MSG_KEY, "Missing parameters for Wi-Fi Profile command.");
                 }
             }
         } catch (JSONException e) {
             Log.e(TAG, "Error parsing command.");
             e.printStackTrace();
         }
+
+        return result.toString();
     }
 
     /**
@@ -126,7 +157,24 @@ public class PairingHandler implements IInDataHandler, IOutDataHandler, IInFileH
      * @param context Android's context.
      */
     @Override
-    public void storeFile(byte[] fileContents, String fileName, Context context) {
-        CredentialsManager.storeFile(fileContents, fileName);
+    public String storeFile(byte[] fileContents, String fileName, Context context) {
+        JSONObject result = new JSONObject();
+
+        try {
+            try {
+                CredentialsManager.storeFile(fileContents, fileName);
+                result.put(RESULT_KEY, SUCCESS);
+            } catch (Exception e) {
+                Log.e(TAG, "Error creating Wi-Fi profile.");
+                e.printStackTrace();
+                result.put(RESULT_KEY, ERROR);
+                result.put(ERROR_MSG_KEY, "Error creating Wi-Fi profile: " + e.toString());
+            }
+        } catch (JSONException e) {
+            Log.e(TAG, "Error creating store file result.");
+            e.printStackTrace();
+        }
+
+        return result.toString();
     }
 }

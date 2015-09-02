@@ -44,9 +44,7 @@ import edu.cmu.sei.ams.cloudlet.android.utils.FileHandler;
 public class OutDataService extends Service {
     private final String TAG = "OutDataService";
 
-    private final String OUT_FILE_PATH = ADBConstants.ADB_FILES_PATH + "out_data.json";
-
-    // This get the data requested.
+    // This gets the data requested.
     private IOutDataHandler mDataHandler;
 
     public OutDataService() {
@@ -77,7 +75,7 @@ public class OutDataService extends Service {
         String jsonDataAsString = mDataHandler.getData(jsonData, this);
 
         Log.v(TAG, "Writing to file.");
-        FileHandler.writeToFile(OUT_FILE_PATH, jsonDataAsString);
+        FileHandler.writeToFile(ADBConstants.OUT_FILE_PATH, jsonDataAsString);
         Log.v(TAG, "Finished writing to file.");
 
         // We don't need this service to run anymore.
