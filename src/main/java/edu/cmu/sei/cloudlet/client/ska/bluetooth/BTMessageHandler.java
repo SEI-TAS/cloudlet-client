@@ -123,8 +123,8 @@ public class BTMessageHandler {
 
             // Get the command and remove it since we will pass the same structure with the data
             // to specific handlers.
-            String command = parsedMessage.getString("command");
-            parsedMessage.remove("command");
+            String command = parsedMessage.getString("bt_command");
+            parsedMessage.remove("bt_command");
 
             if(command.equals(CMD_SEND_DATA)) {
                 Log.v(TAG, "Data request");
@@ -136,10 +136,13 @@ public class BTMessageHandler {
             else if(command.equals(CMD_RECEIVE_DATA)) {
                 Log.v(TAG, "Receiving data");
                 Log.v(TAG, parsedMessage.toString());
-                mInDataHandler.handleData(parsedMessage, mContext);
+                String result = mInDataHandler.handleData(parsedMessage, mContext);
 
-                sendMessage(REPLY_ACK);
+                //sendMessage(REPLY_ACK);
                 Log.v(TAG, "Finished processing received data");
+
+                Log.v(TAG, "Returning result.");
+                sendMessage(result);
             }
             else if(command.equals(CMD_RECEIVE_FILE)) {
                 Log.v(TAG, "Receiving a file");
@@ -149,10 +152,13 @@ public class BTMessageHandler {
 
                 // Get the actual file data contents.
                 byte[] fileData = receiveFile();
-                sendMessage(REPLY_ACK);
+                //sendMessage(REPLY_ACK);
 
-                mFileDataHandler.storeFile(fileData, fileName, mContext);
+                String result = mFileDataHandler.storeFile(fileData, fileName, mContext);
                 Log.v(TAG, "Finished processing received file");
+
+                Log.v(TAG, "Returning result.");
+                sendMessage(result);
             }
         } catch (JSONException e) {
             e.printStackTrace();
@@ -195,7 +201,7 @@ public class BTMessageHandler {
             Log.v(TAG, "File size: " + fileTotalSize);
             sendMessage(REPLY_ACK);
 
-            while(true) {
+            while(fileTotalSize > 0) {
                 numBytes = mInStream.read(buffer);
                 Log.v(TAG, "Num bytes: " + numBytes);
 
