@@ -130,6 +130,7 @@ public class PairingHandler implements IInDataHandler, IOutDataHandler, IInFileH
                         WifiProfileManager.setupWPA2WifiProfile(networkId, serverCertificatePath,
                                 CredentialsManager.getDeviceId(context), password, context);
                         result.put(RESULT_KEY, SUCCESS);
+                        Log.v(TAG, "Wi-Fi profile successfully created.");
                     } catch (Exception e) {
                         Log.e(TAG, "Error creating Wi-Fi profile.");
                         e.printStackTrace();

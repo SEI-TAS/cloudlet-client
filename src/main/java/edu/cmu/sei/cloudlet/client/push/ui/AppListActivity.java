@@ -202,10 +202,17 @@ public class AppListActivity extends Activity
                             @Override
                             public void handle(File file)
                             {
-                                Intent intent = new Intent();
-                                intent.setAction(Intent.ACTION_VIEW);
-                                intent.setDataAndType(Uri.fromFile(file), "application/vnd.android.package-archive");
-                                startActivityForResult(intent, 5000);
+                                if(file != null)
+                                {
+                                    Intent intent = new Intent();
+                                    intent.setAction(Intent.ACTION_VIEW);
+                                    intent.setDataAndType(Uri.fromFile(file), "application/vnd.android.package-archive");
+                                    startActivityForResult(intent, 5000);
+                                }
+                                else
+                                {
+                                    log.error("Error installing APK file: file was not found.");
+                                }
                             }
                         }).execute();
                     }
