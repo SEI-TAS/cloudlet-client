@@ -58,7 +58,7 @@ public class WifiProfileManager {
      * @param password the device password to be set
      * @param context Android's context
      */
-    public static void setupWPA2WifiProfile(String ssid, String serverFilePath, String deviceId,
+    public static int setupWPA2WifiProfile(String ssid, String serverFilePath, String deviceId,
                                         String password, Context context) throws CertificateException, FileNotFoundException {
         // Create a cert object from the certificate file.
         CertificateFactory certificateGenerator = CertificateFactory.getInstance("X.509");
@@ -68,6 +68,7 @@ public class WifiProfileManager {
         // Create basic network configuration.
         WifiConfiguration wifiConfig = new WifiConfiguration();
         wifiConfig.SSID = ssid;
+        wifiConfig.status = WifiConfiguration.Status.DISABLED;
 
         // Configure EAP-TTLS and PAP specific parameters.
         // Set security methods to use.
@@ -110,7 +111,10 @@ public class WifiProfileManager {
             throw new RuntimeException(errorMessage);
         }
         else {
+            // Ensure it is disabled by default.
+            wifiManager.disableNetwork(netword_profile_id);
             Log.v(TAG, "Wi-Fi configuration stored with id " + netword_profile_id);
+            return netword_profile_id;
         }
     }
 }

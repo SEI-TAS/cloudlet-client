@@ -119,12 +119,16 @@ public class PairingHandler implements IInDataHandler, IOutDataHandler, IInFileH
                 String password = data.getString(PASSWORD);
                 Log.v(TAG, "Received password: " + password);
 
-                // Store password for future use.
-                CredentialsManager.storeFile(password.getBytes(), "password");
-
                 // A network profile will only be created if we got all three data in the same message.
                 if(!networkId.equals("") && !certName.equals("") && !password.equals("")) {
                     String serverCertificatePath = CredentialsManager.CREDENTIALS_FOLDER_PATH + certName;
+
+                    // Store password for future use.
+                    CredentialsManager.storeFile(password.getBytes(), "password");
+
+                    // Store other info for future use.
+                    CredentialsManager.storeFile(networkId.getBytes(), "ssid");
+                    CredentialsManager.storeFile(serverCertificatePath.getBytes(), "radius_cert_path");
 
                     try {
                         WifiProfileManager.setupWPA2WifiProfile(networkId, serverCertificatePath,
@@ -166,13 +170,13 @@ public class PairingHandler implements IInDataHandler, IOutDataHandler, IInFileH
                 CredentialsManager.storeFile(fileContents, fileName);
                 result.put(RESULT_KEY, SUCCESS);
             } catch (Exception e) {
-                Log.e(TAG, "Error creating Wi-Fi profile.");
+                Log.e(TAG, "Error storing file.");
                 e.printStackTrace();
                 result.put(RESULT_KEY, ERROR);
-                result.put(ERROR_MSG_KEY, "Error creating Wi-Fi profile: " + e.toString());
+                result.put(ERROR_MSG_KEY, "Error storing file: " + e.toString());
             }
         } catch (JSONException e) {
-            Log.e(TAG, "Error creating store file result.");
+            Log.e(TAG, "Error creating stored file result.");
             e.printStackTrace();
         }
 

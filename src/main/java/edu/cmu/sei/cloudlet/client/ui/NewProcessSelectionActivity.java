@@ -30,12 +30,18 @@ http://jquery.org/license
 package edu.cmu.sei.cloudlet.client.ui;
 
 import android.app.Activity;
+import android.content.Context;
 import android.content.Intent;
+import android.net.wifi.WifiManager;
 import android.os.Bundle;
+import android.util.Log;
 import android.view.View;
 import android.widget.Button;
+
+import edu.cmu.sei.ams.cloudlet.android.CredentialsManager;
 import edu.cmu.sei.cloudlet.client.R;
 import edu.cmu.sei.cloudlet.client.push.ui.AppListActivity;
+import edu.cmu.sei.cloudlet.client.security.WifiProfileManager;
 
 /**
  * User: jdroot
@@ -54,6 +60,7 @@ public class NewProcessSelectionActivity extends Activity
         final Button cloudletButton = (Button) findViewById(R.id.cloudlet_selection);
         final Button appButton = (Button) findViewById(R.id.app_selection);
         final Button pairingButton = (Button) findViewById(R.id.pairing_selection);
+        final Button wifiConnectButton = (Button) findViewById(R.id.wifi_connect_button);
 
         //Make the old cloudlet app run
         cloudletButton.setOnClickListener(new View.OnClickListener() {
@@ -85,5 +92,34 @@ public class NewProcessSelectionActivity extends Activity
                 startActivity(i);
             }
         });
+
+        //Start the service selection activity
+        wifiConnectButton.setOnClickListener(new View.OnClickListener()
+        {
+            final String TAG = "WifiConnectButton";
+
+            @Override
+            public void onClick(View view)
+            {
+                try {
+                    String networkId = CredentialsManager.loadDataFromFile("ssid");
+                    String serverCertificatePath = CredentialsManager.loadDataFromFile("radius_cert_path");
+                    String password = CredentialsManager.loadDataFromFile("password");
+
+                    int netId = WifiProfileManager.setupWPA2WifiProfile(networkId, serverCertificatePath,
+                                        CredentialsManager.getDeviceId(NewProcessSelectionActivity.this), password, NewProcessSelectionActivity.this);
+                    Log.v(TAG, "Wi-Fi profile successfully created.");
+
+                    // Connect to network.
+                    WifiManager wifiManager = (WifiManager) NewProcessSelectionActivity.this.getSystemService(Context.WIFI_SERVICE);
+                    wifiManager.enableNetwork(netId, true);
+
+                } catch (Exception e) {
+                    Log.e(TAG, "Error creating Wi-Fi profile.");
+                    e.printStackTrace();
+                }
+            }
+        });
+
     }
 }

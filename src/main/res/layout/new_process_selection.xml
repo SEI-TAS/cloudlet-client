@@ -49,7 +49,17 @@ android:text="List Cloudlets"
                 android:id="@+id/app_selection"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:text="App Store" android:layout_centerVertical="true" android:layout_centerHorizontal="true"/>
+                android:text="App Store"
+            android:layout_alignParentTop="true"
+            android:layout_centerHorizontal="true" />
+
+        <Button
+            android:id="@+id/pairing_selection"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+android:text="Pairing Process"
+            android:layout_alignParentBottom="true"
+            android:layout_centerHorizontal="true" />
 
     </RelativeLayout>
 
@@ -60,10 +70,10 @@ android:text="List Cloudlets"
 	    android:orientation="vertical" >
 
         <Button
-            android:id="@+id/pairing_selection"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-android:text="Pairing Process"
+            android:text="Connect To Router"
+            android:id="@+id/wifi_connect_button"
             android:layout_centerVertical="true"
             android:layout_centerHorizontal="true" />
     </RelativeLayout>
