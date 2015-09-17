@@ -41,7 +41,9 @@ import java.io.FileNotFoundException;
 import java.security.cert.CertificateException;
 import java.security.cert.CertificateFactory;
 import java.security.cert.X509Certificate;
-import java.util.NoSuchElementException;
+import java.util.List;
+
+import edu.cmu.sei.ams.cloudlet.android.CredentialsManager;
 
 /**
  * Handles the creation of Wi-Fi profiles for secure communication with a cloudlet.
@@ -85,9 +87,14 @@ public class WifiProfileManager {
         // Store the security profile in the Wi-Fi profile.
         wifiConfig.enterpriseConfig = enterpriseConfig;
 
-        // Store the profile.
+        // Get access to WiFi profiles.
         WifiManager wifiManager = (WifiManager) context.getSystemService(Context.WIFI_SERVICE);
         wifiManager.setWifiEnabled(true);
+
+        // First remove it, if it exists.
+        WifiProfileManager.removeNetworkProfile(wifiManager, ssid);
+
+        // Store the profile.
         int netword_profile_id = wifiManager.addNetwork(wifiConfig);
         if(netword_profile_id == -1) {
             // Android won't give us the detailed error. The issue may be that the keystore is locked.
@@ -111,10 +118,61 @@ public class WifiProfileManager {
             throw new RuntimeException(errorMessage);
         }
         else {
-            // Ensure it is disabled by default.
+            // Ensure it is disabled by default, and that this new config has been stored.
             wifiManager.disableNetwork(netword_profile_id);
+            wifiManager.saveConfiguration();
             Log.v(TAG, "Wi-Fi configuration stored with id " + netword_profile_id);
             return netword_profile_id;
         }
+    }
+
+    /**
+     * Re-generates the network profile from data stored in local files from a previous pairing process.
+     * @param context
+     */
+    public static void reGenerateProfile(Context context)
+    {
+        try {
+            String networkId = CredentialsManager.loadDataFromFile("ssid");
+            String serverCertificatePath = CredentialsManager.loadDataFromFile("radius_cert_path");
+            String password = CredentialsManager.loadDataFromFile("password");
+
+            // Now add it.
+            int netId = WifiProfileManager.setupWPA2WifiProfile(networkId, serverCertificatePath,
+                    CredentialsManager.getDeviceId(context), password, context);
+            Log.v(TAG, "Wi-Fi profile successfully created.");
+
+            // Connect to network.
+            WifiManager wifiManager = (WifiManager) context.getSystemService(Context.WIFI_SERVICE);
+            wifiManager.enableNetwork(netId, true);
+
+        } catch (Exception e) {
+            Log.e(TAG, "Error creating Wi-Fi profile.");
+            e.printStackTrace();
+        }
+    }
+
+    /**
+     * Removes a given network profile by SSID.
+     * @param wifiManager the link to the WiFiManager
+     * @param ssid the SSID of the profile to remove.
+     * @return true if it was found and removed.
+     */
+    private static boolean removeNetworkProfile(WifiManager wifiManager, String ssid)
+    {
+        // First try to remove an existing profile with the same SSID, if any.
+        List<WifiConfiguration> list = wifiManager.getConfiguredNetworks();
+        for(WifiConfiguration conf : list)
+        {
+            if(conf.SSID.equals(ssid))
+            {
+                Log.v(TAG, "Removing SSID: " + conf.SSID);
+                wifiManager.removeNetwork(conf.networkId);
+                wifiManager.saveConfiguration();
+                return true;
+            }
+        }
+
+        return false;
     }
 }

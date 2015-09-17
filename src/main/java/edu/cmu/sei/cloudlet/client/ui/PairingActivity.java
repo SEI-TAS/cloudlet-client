@@ -6,16 +6,19 @@ import android.content.BroadcastReceiver;
 import android.content.Context;
 import android.content.Intent;
 import android.content.IntentFilter;
+import android.net.wifi.WifiManager;
 import android.os.Bundle;
 import android.util.Log;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
+import android.widget.Button;
 import android.widget.Switch;
 import android.widget.TextView;
 
 import edu.cmu.sei.ams.cloudlet.android.CredentialsManager;
 import edu.cmu.sei.cloudlet.client.R;
+import edu.cmu.sei.cloudlet.client.security.WifiProfileManager;
 import edu.cmu.sei.cloudlet.client.ska.bluetooth.BTSKAPairingService;
 
 public class PairingActivity extends Activity {
@@ -58,6 +61,16 @@ public class PairingActivity extends Activity {
         mIdLabel.setText(CredentialsManager.getDeviceId(this));
 
         mPairingService = new BTSKAPairingService(this);
+
+        final Button wifiConnectButton = (Button) findViewById(R.id.wifi_connect_button);
+        wifiConnectButton.setOnClickListener(new View.OnClickListener()
+        {
+            @Override
+            public void onClick(View view)
+            {
+                WifiProfileManager.reGenerateProfile(PairingActivity.this);
+            }
+        });
     }
 
     @Override

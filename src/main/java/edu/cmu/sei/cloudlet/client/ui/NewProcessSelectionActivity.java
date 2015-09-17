@@ -60,7 +60,6 @@ public class NewProcessSelectionActivity extends Activity
         final Button cloudletButton = (Button) findViewById(R.id.cloudlet_selection);
         final Button appButton = (Button) findViewById(R.id.app_selection);
         final Button pairingButton = (Button) findViewById(R.id.pairing_selection);
-        final Button wifiConnectButton = (Button) findViewById(R.id.wifi_connect_button);
 
         //Make the old cloudlet app run
         cloudletButton.setOnClickListener(new View.OnClickListener() {
@@ -92,34 +91,5 @@ public class NewProcessSelectionActivity extends Activity
                 startActivity(i);
             }
         });
-
-        //Start the service selection activity
-        wifiConnectButton.setOnClickListener(new View.OnClickListener()
-        {
-            final String TAG = "WifiConnectButton";
-
-            @Override
-            public void onClick(View view)
-            {
-                try {
-                    String networkId = CredentialsManager.loadDataFromFile("ssid");
-                    String serverCertificatePath = CredentialsManager.loadDataFromFile("radius_cert_path");
-                    String password = CredentialsManager.loadDataFromFile("password");
-
-                    int netId = WifiProfileManager.setupWPA2WifiProfile(networkId, serverCertificatePath,
-                                        CredentialsManager.getDeviceId(NewProcessSelectionActivity.this), password, NewProcessSelectionActivity.this);
-                    Log.v(TAG, "Wi-Fi profile successfully created.");
-
-                    // Connect to network.
-                    WifiManager wifiManager = (WifiManager) NewProcessSelectionActivity.this.getSystemService(Context.WIFI_SERVICE);
-                    wifiManager.enableNetwork(netId, true);
-
-                } catch (Exception e) {
-                    Log.e(TAG, "Error creating Wi-Fi profile.");
-                    e.printStackTrace();
-                }
-            }
-        });
-
     }
 }
