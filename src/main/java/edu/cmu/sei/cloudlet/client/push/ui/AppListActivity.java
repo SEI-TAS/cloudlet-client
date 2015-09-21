@@ -40,6 +40,8 @@ import android.os.Bundle;
 import android.os.Environment;
 import android.util.Log;
 import android.view.LayoutInflater;
+import android.view.Menu;
+import android.view.MenuItem;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.*;
@@ -108,6 +110,33 @@ public class AppListActivity extends Activity
         adapter = new AppRowAdapter(this, R.layout.new_cloudlet_app_item, apps);
         final ListView listView = (ListView)findViewById(R.id.listView);
         listView.setAdapter(adapter);
+    }
+
+    @Override
+    public boolean onCreateOptionsMenu(Menu menu) {
+        // Inflate the menu; this adds items to the action bar if it is present.
+        getMenuInflater().inflate(R.menu.menu_appstore, menu);
+        return true;
+    }
+
+    @Override
+    public boolean onOptionsItemSelected(MenuItem item) {
+        // Handle action bar item clicks here. The action bar will
+        // automatically handle clicks on the Home/Up button, so long
+        // as you specify a parent activity in AndroidManifest.xml.
+        int id = item.getItemId();
+
+        // Delete APK cache.
+        if (id == R.id.clear_apks) {
+            File apkFolder = getStorageDirectory();
+            String[] children = apkFolder.list();
+            for (int i = 0; i < children.length; i++)
+            {
+                new File(apkFolder, children[i]).delete();
+            }
+        }
+
+        return super.onOptionsItemSelected(item);
     }
 
     private boolean isInstalled(App app)
