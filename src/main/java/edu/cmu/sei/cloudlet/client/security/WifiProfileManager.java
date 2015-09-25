@@ -118,8 +118,8 @@ public class WifiProfileManager {
             throw new RuntimeException(errorMessage);
         }
         else {
-            // Ensure it is disabled by default, and that this new config has been stored.
-            wifiManager.disableNetwork(netword_profile_id);
+            // Ensure it is enabled by default, and that this new config has been stored.
+            wifiManager.enableNetwork(netword_profile_id, true);
             wifiManager.saveConfiguration();
             Log.v(TAG, "Wi-Fi configuration stored with id " + netword_profile_id);
             return netword_profile_id;
@@ -141,11 +141,6 @@ public class WifiProfileManager {
             int netId = WifiProfileManager.setupWPA2WifiProfile(networkId, serverCertificatePath,
                     CredentialsManager.getDeviceId(context), password, context);
             Log.v(TAG, "Wi-Fi profile successfully created.");
-
-            // Connect to network.
-            WifiManager wifiManager = (WifiManager) context.getSystemService(Context.WIFI_SERVICE);
-            wifiManager.enableNetwork(netId, true);
-
         } catch (Exception e) {
             Log.e(TAG, "Error creating Wi-Fi profile.");
             e.printStackTrace();
