@@ -136,6 +136,8 @@ public class AppListActivity extends Activity
             }
         }
 
+        Toast.makeText(this, "APK cache folder cleared.", Toast.LENGTH_LONG).show();
+
         return super.onOptionsItemSelected(item);
     }
 
