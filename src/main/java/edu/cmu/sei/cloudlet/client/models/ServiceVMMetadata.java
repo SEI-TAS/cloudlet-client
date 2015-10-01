@@ -34,7 +34,7 @@ import java.io.File;
 import org.json.JSONException;
 import org.json.JSONObject;
 
-import edu.cmu.sei.cloudlet.client.FileUtils;
+import edu.cmu.sei.cloudlet.client.utils.FileUtils;
 
 import android.util.Log;
 

@@ -27,13 +27,7 @@ Copyright 2005, 2014 jQuery Foundation, Inc. and other contributors
 Released under the MIT license
 http://jquery.org/license
 */
-package edu.cmu.sei.cloudlet.client.push.net;
-
-import org.json.JSONException;
-import org.json.JSONObject;
-
-import edu.cmu.sei.cloudlet.client.net.CloudletCommandException;
-import edu.cmu.sei.cloudlet.client.net.ServiceVmCommandSender;
+package edu.cmu.sei.cloudlet.client.net;
 
 /**
  * Class that handles the protocol to communicate Cloudlet Push commands with a CloudletServer.

@@ -50,12 +50,12 @@
             android:screenOrientation="portrait" >
         </activity>
         <activity
-            android:name=".push.ui.CloudletAppsListActivity"
+            android:name=".ui.CloudletAppsListActivity"
             android:label="@string/app_name"
             android:screenOrientation="portrait" >
         </activity>
         <activity
-            android:name=".push.ui.AppListActivity"
+            android:name=".ui.AppListActivity"
             android:label="@string/app_name"
             android:screenOrientation="portrait" >
         </activity>
@@ -65,7 +65,7 @@
             android:screenOrientation="portrait" >
         </activity>
         <activity
-            android:name=".push.ui.InstalledApplcationListActivity"
+            android:name=".ui.InstalledApplcationListActivity"
             android:label="@string/app_name"
             android:screenOrientation="portrait" >
         </activity>

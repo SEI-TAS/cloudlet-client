@@ -27,13 +27,15 @@ Copyright 2005, 2014 jQuery Foundation, Inc. and other contributors
 Released under the MIT license
 http://jquery.org/license
 */
-package edu.cmu.sei.cloudlet.client.push.models;
+package edu.cmu.sei.cloudlet.client.models;
 
 import java.util.ArrayList;
 import java.util.List;
 import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
+
+import edu.cmu.sei.cloudlet.client.models.AppInfoObject;
 
 public class JSONToAppInfoObject {
 	

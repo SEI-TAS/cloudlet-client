@@ -27,7 +27,7 @@ Copyright 2005, 2014 jQuery Foundation, Inc. and other contributors
 Released under the MIT license
 http://jquery.org/license
 */
-package edu.cmu.sei.cloudlet.client;
+package edu.cmu.sei.cloudlet.client.models;
 
 import edu.cmu.sei.ams.cloudlet.Cloudlet;
 

@@ -30,18 +30,12 @@ http://jquery.org/license
 package edu.cmu.sei.cloudlet.client.ui;
 
 import android.app.Activity;
-import android.content.Context;
 import android.content.Intent;
-import android.net.wifi.WifiManager;
 import android.os.Bundle;
-import android.util.Log;
 import android.view.View;
 import android.widget.Button;
 
-import edu.cmu.sei.ams.cloudlet.android.CredentialsManager;
 import edu.cmu.sei.cloudlet.client.R;
-import edu.cmu.sei.cloudlet.client.push.ui.AppListActivity;
-import edu.cmu.sei.cloudlet.client.security.WifiProfileManager;
 
 /**
  * User: jdroot

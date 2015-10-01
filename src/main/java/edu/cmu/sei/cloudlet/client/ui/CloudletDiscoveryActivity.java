@@ -32,12 +32,10 @@ package edu.cmu.sei.cloudlet.client.ui;
 import java.net.InetAddress;
 import java.net.NetworkInterface;
 import java.net.URL;
-import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
 
 import javax.jmdns.ServiceEvent;
-import javax.jmdns.ServiceInfo;
 import javax.jmdns.ServiceListener;
 
 import edu.cmu.sei.ams.cloudlet.Cloudlet;
@@ -46,15 +44,12 @@ import edu.cmu.sei.ams.cloudlet.android.CloudletCallback;
 import edu.cmu.sei.ams.cloudlet.android.CredentialsManager;
 import edu.cmu.sei.ams.cloudlet.android.FindCloudletsAsyncTask;
 import edu.cmu.sei.cloudlet.client.R;
-import edu.cmu.sei.cloudlet.client.CurrentCloudlet;
 
 import android.annotation.SuppressLint;
 import android.app.Activity;
 import android.app.AlertDialog;
 import android.app.ProgressDialog;
 import android.content.DialogInterface;
-import android.content.Intent;
-import android.os.AsyncTask;
 import android.os.Bundle;
 import android.util.Log;
 import android.view.Menu;
@@ -151,31 +146,6 @@ public class CloudletDiscoveryActivity extends Activity implements ServiceListen
 		CloudletFinder finder = new CloudletFinder();
 		finder.enableEncryption(CredentialsManager.getDeviceId(this), CredentialsManager.loadDataFromFile("password"));
         return finder.findCloudlets();
-	}
-
-	private void invokeOverlayDetailsActivity (int selectedCloudlet) 
-	{
-		// Get IP address and port of the selected cloudlet
-		// It starts at 1 because the character at position 0 is "/"
-        Log.v(LOG_TAG, "cloudlets object: " + cloudlets);
-        Log.v(LOG_TAG, "cloudlets object: " + cloudlets.size());
-	    String selectedCloudletName = cloudlets.get(selectedCloudlet).getName();
-
-		String selectedCloudletIPAddress = cloudlets.get(selectedCloudlet).getAddress().getHostAddress();
-		int selectedCloudletPort = cloudlets.get(selectedCloudlet).getPort();
-
-		Log.d(LOG_TAG,"Selected Cloudlet IP Address: " + selectedCloudletIPAddress);
-		Log.d(LOG_TAG,"Selected Cloudlet IP Port: " + selectedCloudletPort);
-		
-		// Store the cloudlet information in a shared static class.
-		CurrentCloudlet.name = selectedCloudletName;
-        CurrentCloudlet.ipAddress = selectedCloudletIPAddress;
-        CurrentCloudlet.port = selectedCloudletPort;
-        CurrentCloudlet.cloudlet = cloudlets.get(selectedCloudlet);
-
-		// Invoke the selection Activity.
-		Intent i = new Intent(this, ProcessSelectionActivity.class);
-		startActivity(i);
 	}
 
 	@Override
