@@ -70,7 +70,7 @@ public class ConnectionInfoFragment extends Fragment
         // Wi-Fi info.
         wifiSsidText = (TextView) inflatedView.findViewById(R.id.wifiSsid);       
         wifiIpText = (TextView) inflatedView.findViewById(R.id.wifiIp);
-        updateWifiInfo();
+        updateConnectionInfo();
 
         return inflatedView;
     }
@@ -80,14 +80,14 @@ public class ConnectionInfoFragment extends Fragment
         super.onResume();
         Log.d(LOG_TAG, "onResume");
         
-        updateWifiInfo();
+        updateConnectionInfo();
     }
     
     public void onWindowFocusChanged (boolean hasFocus)
     {
         if(hasFocus)
         {
-            updateWifiInfo();
+            updateConnectionInfo();
         }
     }    
     
@@ -95,7 +95,7 @@ public class ConnectionInfoFragment extends Fragment
      * Loads the SSID of the Wi-Fi network we are currently connected to, as well as the IP address
      * associated to that connection.
      */
-    public void updateWifiInfo() 
+    public void updateConnectionInfo()
     {
         WifiManager wifiManager = (WifiManager) getActivity().getSystemService(Context.WIFI_SERVICE);
         WifiInfo info = wifiManager.getConnectionInfo();
@@ -111,8 +111,7 @@ public class ConnectionInfoFragment extends Fragment
         wifiSsid = info.getSSID();
         int ipAddress = info.getIpAddress();
         
-        String ip = null;
-        ip = String.format("%d.%d.%d.%d",
+        String ip = String.format("%d.%d.%d.%d",
                             (ipAddress & 0xff),
                             (ipAddress >> 8 & 0xff),
                             (ipAddress >> 16 & 0xff),
@@ -121,28 +120,18 @@ public class ConnectionInfoFragment extends Fragment
         wifiIpAddress = ip;
         
         // Update the UI.
-        refreshWifiUIText();
+        refreshConnectionUIText();
     }
-    
     
     /**
      * Refreshes the GUI to show the current information about the Wi-Fi connection.
      */
-    private void refreshWifiUIText()
+    private void refreshConnectionUIText()
     {
         wifiSsidText.setText(wifiSsid);
         wifiIpText.setText(wifiIpAddress);
     }
-    
-    /**
-     * Refreshes the GUI to show the current information about the Wi-Fi connection.
-     */
-    public void setCloudletInfo(String cloudletName, String cloudletIp)
-    {
-        cloudletNameText.setText(cloudletName);
-        cloudletIpText.setText(cloudletIp);
-    }     
-    
+
     /**
      * Returns the Wi-Fi IP address.
      * @return

@@ -133,9 +133,9 @@ public class AppListActivity extends Activity
             {
                 new File(apkFolder, children[i]).delete();
             }
-        }
 
-        Toast.makeText(this, "APK cache folder cleared.", Toast.LENGTH_LONG).show();
+            Toast.makeText(this, "APK cache folder cleared.", Toast.LENGTH_LONG).show();
+        }
 
         return super.onOptionsItemSelected(item);
     }

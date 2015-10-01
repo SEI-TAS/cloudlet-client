@@ -127,7 +127,7 @@ public class CloudletDiscoveryActivity extends Activity implements ServiceListen
 	private void runDiscoveryProcess()
 	{
 	    ConnectionInfoFragment connInfoFragment = (ConnectionInfoFragment) getFragmentManager().findFragmentById(R.id.connInfoPanel);
-	    connInfoFragment.updateWifiInfo();
+	    connInfoFragment.updateConnectionInfo();
 
         FindCloudletsAsyncTask task = new FindCloudletsAsyncTask(this, new CloudletCallback<List<Cloudlet>>()
         {
