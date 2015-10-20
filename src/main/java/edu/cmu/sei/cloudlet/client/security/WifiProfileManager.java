@@ -65,7 +65,7 @@ public class WifiProfileManager {
         // Create a cert object from the certificate file.
         CertificateFactory certificateGenerator = CertificateFactory.getInstance("X.509");
         X509Certificate serverCertificate = (X509Certificate) certificateGenerator.generateCertificate(new FileInputStream(serverFilePath));
-        Log.v(TAG, "Certificate: " + serverCertificate);
+        //Log.v(TAG, "Certificate: " + serverCertificate);
 
         // Create basic network configuration.
         WifiConfiguration wifiConfig = new WifiConfiguration();
