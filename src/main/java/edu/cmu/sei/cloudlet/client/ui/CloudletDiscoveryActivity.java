@@ -141,13 +141,6 @@ public class CloudletDiscoveryActivity extends Activity implements ServiceListen
         task.execute();
 	}
 
-	private List<Cloudlet> doZeroConfSetup()
-	{
-		CloudletFinder finder = new CloudletFinder();
-		finder.enableEncryption(CredentialsManager.getDeviceId(this), CredentialsManager.loadDataFromFile("password"));
-        return finder.findCloudlets();
-	}
-
 	@Override
 	public void serviceAdded(ServiceEvent event) {
 		Log.d(LOG_TAG,
@@ -193,12 +186,16 @@ public class CloudletDiscoveryActivity extends Activity implements ServiceListen
 			adapter.clear();
             for (Cloudlet cloudlet : cloudlets)
 			{
-				Log.d(LOG_TAG,"Name = "+ cloudlet.getName());
-				Log.d(LOG_TAG,"IP = "+ cloudlet.getAddress());
-				Log.d(LOG_TAG,"Port = " + cloudlet.getPort());
+				String encryptionState = "disabled";
+				if(cloudlet.isEncryptionEnabled())
+					encryptionState = "enabled";
+				Log.d(LOG_TAG, "Name = "+ cloudlet.getName());
+				Log.d(LOG_TAG, "IP = "+ cloudlet.getAddress());
+				Log.d(LOG_TAG, "Port = " + cloudlet.getPort());
+				Log.d(LOG_TAG, "Encryption = " + encryptionState);
 				adapter.add(cloudlet.getName() + ":" +
 						cloudlet.getAddress() + ":" +
-						cloudlet.getPort());
+						cloudlet.getPort() + " (encryption " + encryptionState + ")");
 			}
 			
 			//adapter.notifyDataSetChanged();

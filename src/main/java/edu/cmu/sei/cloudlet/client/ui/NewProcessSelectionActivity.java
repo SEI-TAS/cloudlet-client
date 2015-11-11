@@ -96,15 +96,6 @@ public class NewProcessSelectionActivity extends Activity
         // Inflate the menu; this adds items to the action bar if it is present.
         getMenuInflater().inflate(R.menu.menu_process_selection, menu);
 
-        MenuItem item = menu.findItem(R.id.encryption_state_change);
-        boolean encryptionEnabled = CloudletPreferences.isEncryptionEnabled(this);
-        if(encryptionEnabled) {
-            item.setTitle("Disable API Encryption");
-        }
-        else {
-            item.setTitle("Enable API Encryption");
-        }
-
         return true;
     }
 
@@ -114,23 +105,6 @@ public class NewProcessSelectionActivity extends Activity
         // automatically handle clicks on the Home/Up button, so long
         // as you specify a parent activity in AndroidManifest.xml.
         int id = item.getItemId();
-
-        //noinspection SimplifiableIfStatement
-        if (id == R.id.encryption_state_change) {
-            // Change the encryption enabled state in the preferences.
-            boolean encryptionEnabled = CloudletPreferences.isEncryptionEnabled(this);
-            boolean newEncryptionState = ! encryptionEnabled;
-            CloudletPreferences.setEncryptionState(this, newEncryptionState);
-
-            if(newEncryptionState) {
-                Toast.makeText(this, "API encryption enabled", Toast.LENGTH_LONG).show();
-                item.setTitle("Disable API Encryption");
-            }
-            else {
-                Toast.makeText(this, "API encryption disabled", Toast.LENGTH_LONG).show();
-                item.setTitle("Enable API Encryption");
-            }
-        }
 
         return super.onOptionsItemSelected(item);
     }
