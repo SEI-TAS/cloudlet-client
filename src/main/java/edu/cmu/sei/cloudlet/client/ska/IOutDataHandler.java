@@ -27,14 +27,16 @@ Copyright 2005, 2014 jQuery Foundation, Inc. and other contributors
 Released under the MIT license
 http://jquery.org/license
 */
-package edu.cmu.sei.cloudlet.client.ska.adb;
+package edu.cmu.sei.cloudlet.client.ska;
 
 import android.content.Context;
 import android.os.Bundle;
 
+import org.json.JSONObject;
+
 /**
- * Created by Sebastian on 02-07-2015.
+ * Created by Sebastian on 2015-07-02.
  */
-public interface IInFileHandler {
-    String storeFile(byte[] fileContents, String fileName, Context context);
+public interface IOutDataHandler {
+    String getData(JSONObject data, Context context);
 }

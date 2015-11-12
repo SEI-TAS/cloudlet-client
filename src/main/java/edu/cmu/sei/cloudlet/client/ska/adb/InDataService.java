@@ -40,6 +40,7 @@ import org.json.JSONObject;
 
 import edu.cmu.sei.ams.cloudlet.android.utils.FileHandler;
 import edu.cmu.sei.cloudlet.client.security.PairingHandler;
+import edu.cmu.sei.cloudlet.client.ska.IInDataHandler;
 
 public class InDataService extends Service {
     private final String TAG = "InDataService";

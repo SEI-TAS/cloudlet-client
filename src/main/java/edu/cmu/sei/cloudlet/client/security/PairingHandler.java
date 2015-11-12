@@ -38,9 +38,9 @@ import org.json.JSONObject;
 import java.util.Iterator;
 
 import edu.cmu.sei.ams.cloudlet.android.CredentialsManager;
-import edu.cmu.sei.cloudlet.client.ska.adb.IInDataHandler;
-import edu.cmu.sei.cloudlet.client.ska.adb.IInFileHandler;
-import edu.cmu.sei.cloudlet.client.ska.adb.IOutDataHandler;
+import edu.cmu.sei.cloudlet.client.ska.IInDataHandler;
+import edu.cmu.sei.cloudlet.client.ska.IInFileHandler;
+import edu.cmu.sei.cloudlet.client.ska.IOutDataHandler;
 
 /**
  * Created by Sebastian on 2015-07-02.
