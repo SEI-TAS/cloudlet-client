@@ -52,6 +52,10 @@ import edu.cmu.sei.ams.cloudlet.android.CredentialsManager;
 public class WifiProfileManager {
     private static final String TAG = "WifiProfileManager";
 
+    public static final String SSID_FILE_NAME = "ssid";
+    public static final String SERVER_CERT_PATH_FILE_NAME = "server_cert_path";
+    public static final String AUTH_PASSWORD_FILE_NAME = "auth_password";
+
     /**
      * Creates a WPA2-Enterprise configuration with the give data.
      * @param ssid the network ssid
@@ -133,9 +137,9 @@ public class WifiProfileManager {
     public static void reGenerateProfile(Context context)
     {
         try {
-            String networkId = CredentialsManager.loadDataFromFile("ssid");
-            String serverCertificatePath = CredentialsManager.loadDataFromFile("radius_cert_path");
-            String password = CredentialsManager.loadDataFromFile("password");
+            String networkId = CredentialsManager.loadDataFromFile(SSID_FILE_NAME);
+            String serverCertificatePath = CredentialsManager.loadDataFromFile(SERVER_CERT_PATH_FILE_NAME);
+            String password = CredentialsManager.loadDataFromFile(AUTH_PASSWORD_FILE_NAME);
 
             // Now add it.
             int netId = WifiProfileManager.setupWPA2WifiProfile(networkId, serverCertificatePath,

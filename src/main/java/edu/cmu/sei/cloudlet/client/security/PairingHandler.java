@@ -121,14 +121,12 @@ public class PairingHandler implements IInDataHandler, IOutDataHandler, IInFileH
 
                 // A network profile will only be created if we got all three data in the same message.
                 if(!networkId.equals("") && !certName.equals("") && !password.equals("")) {
-                    String serverCertificatePath = CredentialsManager.CREDENTIALS_FOLDER_PATH + certName;
+                    String serverCertificatePath = CredentialsManager.getFullPath(certName);
 
-                    // Store password for future use.
-                    CredentialsManager.storeFile(password.getBytes(), "password");
-
-                    // Store other info for future use.
-                    CredentialsManager.storeFile(networkId.getBytes(), "ssid");
-                    CredentialsManager.storeFile(serverCertificatePath.getBytes(), "radius_cert_path");
+                    // Store other profile info in case we want to create the profile again.
+                    CredentialsManager.storeFile(networkId.getBytes(), WifiProfileManager.SSID_FILE_NAME);
+                    CredentialsManager.storeFile(password.getBytes(), WifiProfileManager.AUTH_PASSWORD_FILE_NAME);
+                    CredentialsManager.storeFile(serverCertificatePath.getBytes(), WifiProfileManager.SERVER_CERT_PATH_FILE_NAME);
 
                     try {
                         WifiProfileManager.setupWPA2WifiProfile(networkId, serverCertificatePath,

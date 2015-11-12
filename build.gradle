@@ -22,8 +22,8 @@ android {
     defaultConfig {
         minSdkVersion 18
         targetSdkVersion 18
-        versionCode 11
-        versionName "3.1"
+        versionCode 12
+        versionName "3.2"
     }
     buildTypes {
         release {
@@ -51,7 +51,7 @@ dependencies {
     compile(
         'edu.cmu.sei.ams.log:android-slf4j-logger:1.4.1',
         'edu.cmu.sei.ams.cloudlet:client-lib:2.1.0',
-        'edu.cmu.sei.ams.cloudlet:client-lib-android:2.1.0',
+        'edu.cmu.sei.ams.cloudlet:client-lib-android:2.2.0',
         'org.apache.httpcomponents:httpmime:4.1.1')
     compile fileTree(dir: 'libs', include: ['*.jar'])
 }
