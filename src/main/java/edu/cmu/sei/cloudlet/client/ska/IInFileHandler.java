@@ -36,5 +36,5 @@ import android.os.Bundle;
  * Created by Sebastian on 02-07-2015.
  */
 public interface IInFileHandler {
-    String storeFile(byte[] fileContents, String fileName, Context context);
+    String storeFile(String cloudletName, byte[] fileContents, String fileName, Context context);
 }

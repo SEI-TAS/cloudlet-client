@@ -43,7 +43,8 @@ import java.security.cert.CertificateFactory;
 import java.security.cert.X509Certificate;
 import java.util.List;
 
-import edu.cmu.sei.ams.cloudlet.android.CredentialsManager;
+import edu.cmu.sei.ams.cloudlet.android.AndroidCredentialsManager;
+import edu.cmu.sei.ams.cloudlet.android.DeviceIdManager;
 
 /**
  * Handles the creation of Wi-Fi profiles for secure communication with a cloudlet.
@@ -134,16 +135,17 @@ public class WifiProfileManager {
      * Re-generates the network profile from data stored in local files from a previous pairing process.
      * @param context
      */
-    public static void reGenerateProfile(Context context)
+    public static void reGenerateProfile(String cloudletName, Context context)
     {
         try {
-            String networkId = CredentialsManager.loadDataFromFile(SSID_FILE_NAME);
-            String serverCertificatePath = CredentialsManager.loadDataFromFile(SERVER_CERT_PATH_FILE_NAME);
-            String password = CredentialsManager.loadDataFromFile(AUTH_PASSWORD_FILE_NAME);
+            AndroidCredentialsManager credentialsManager = new AndroidCredentialsManager();
+            String networkId = credentialsManager.loadDataFromFile(cloudletName, SSID_FILE_NAME);
+            String serverCertificatePath = credentialsManager.loadDataFromFile(cloudletName, SERVER_CERT_PATH_FILE_NAME);
+            String password = credentialsManager.loadDataFromFile(cloudletName, AUTH_PASSWORD_FILE_NAME);
 
             // Now add it.
             int netId = WifiProfileManager.setupWPA2WifiProfile(networkId, serverCertificatePath,
-                    CredentialsManager.getDeviceId(context), password, context);
+                    DeviceIdManager.getDeviceId(context), password, context);
             Log.v(TAG, "Wi-Fi profile successfully created.");
         } catch (Exception e) {
             Log.e(TAG, "Error creating Wi-Fi profile.");

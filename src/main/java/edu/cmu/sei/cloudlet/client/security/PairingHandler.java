@@ -37,7 +37,8 @@ import org.json.JSONObject;
 
 import java.util.Iterator;
 
-import edu.cmu.sei.ams.cloudlet.android.CredentialsManager;
+import edu.cmu.sei.ams.cloudlet.android.AndroidCredentialsManager;
+import edu.cmu.sei.ams.cloudlet.android.DeviceIdManager;
 import edu.cmu.sei.cloudlet.client.ska.IInDataHandler;
 import edu.cmu.sei.cloudlet.client.ska.IInFileHandler;
 import edu.cmu.sei.cloudlet.client.ska.IOutDataHandler;
@@ -53,6 +54,7 @@ public class PairingHandler implements IInDataHandler, IOutDataHandler, IInFileH
     private static final String COMMAND = "command";
     private static final String CMD_WIFI_PROFILE = "wifi-profile";
 
+    private static final String CLOUDLET_NAME = "cloudlet_name";
     private static final String SSID_ID = "ssid";
     private static final String SERVER_CERT_NAME = "server_cert_name";
     private static final String PASSWORD = "password";
@@ -61,6 +63,8 @@ public class PairingHandler implements IInDataHandler, IOutDataHandler, IInFileH
     private static final String SUCCESS = "success";
     private static final String ERROR = "error";
     private static final String ERROR_MSG_KEY = "error_message";
+
+    private AndroidCredentialsManager credentialsManager = new AndroidCredentialsManager();
 
     /**
      * Handles a data request. Only handles known data keys.
@@ -78,7 +82,7 @@ public class PairingHandler implements IInDataHandler, IOutDataHandler, IInFileH
                 String key = iter.next();
                 if(DEVICE_ID.equals(key)) {
                     try {
-                        String deviceId = CredentialsManager.getDeviceId(context);
+                        String deviceId = DeviceIdManager.getDeviceId(context);
                         outputData.put(DEVICE_ID, deviceId);
                         outputData.put(RESULT_KEY, SUCCESS);
                     } catch(Exception e) {
@@ -118,19 +122,21 @@ public class PairingHandler implements IInDataHandler, IOutDataHandler, IInFileH
                 Log.v(TAG, "Received cert filename: " + certName);
                 String password = data.getString(PASSWORD);
                 Log.v(TAG, "Received password: " + password);
+                String cloudletName = data.getString(CLOUDLET_NAME);
+                Log.v(TAG, "Received cloudlet name: " + cloudletName);
 
                 // A network profile will only be created if we got all three data in the same message.
                 if(!networkId.equals("") && !certName.equals("") && !password.equals("")) {
-                    String serverCertificatePath = CredentialsManager.getFullPath(certName);
+                    String serverCertificatePath = credentialsManager.getFullPath(cloudletName, certName);
 
                     // Store other profile info in case we want to create the profile again.
-                    CredentialsManager.storeFile(networkId.getBytes(), WifiProfileManager.SSID_FILE_NAME);
-                    CredentialsManager.storeFile(password.getBytes(), WifiProfileManager.AUTH_PASSWORD_FILE_NAME);
-                    CredentialsManager.storeFile(serverCertificatePath.getBytes(), WifiProfileManager.SERVER_CERT_PATH_FILE_NAME);
+                    credentialsManager.storeFile(cloudletName, networkId.getBytes(), WifiProfileManager.SSID_FILE_NAME);
+                    credentialsManager.storeFile(cloudletName, password.getBytes(), WifiProfileManager.AUTH_PASSWORD_FILE_NAME);
+                    credentialsManager.storeFile(cloudletName, serverCertificatePath.getBytes(), WifiProfileManager.SERVER_CERT_PATH_FILE_NAME);
 
                     try {
                         WifiProfileManager.setupWPA2WifiProfile(networkId, serverCertificatePath,
-                                CredentialsManager.getDeviceId(context), password, context);
+                                DeviceIdManager.getDeviceId(context), password, context);
                         result.put(RESULT_KEY, SUCCESS);
                         Log.v(TAG, "Wi-Fi profile successfully created.");
                     } catch (Exception e) {
@@ -160,12 +166,12 @@ public class PairingHandler implements IInDataHandler, IOutDataHandler, IInFileH
      * @param context Android's context.
      */
     @Override
-    public String storeFile(byte[] fileContents, String fileName, Context context) {
+    public String storeFile(String cloudletName, byte[] fileContents, String fileName, Context context) {
         JSONObject result = new JSONObject();
 
         try {
             try {
-                CredentialsManager.storeFile(fileContents, fileName);
+                credentialsManager.storeFile(cloudletName, fileContents, fileName);
                 result.put(RESULT_KEY, SUCCESS);
             } catch (Exception e) {
                 Log.e(TAG, "Error storing file.");

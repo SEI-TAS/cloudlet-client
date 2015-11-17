@@ -39,9 +39,7 @@ import javax.jmdns.ServiceEvent;
 import javax.jmdns.ServiceListener;
 
 import edu.cmu.sei.ams.cloudlet.Cloudlet;
-import edu.cmu.sei.ams.cloudlet.CloudletFinder;
 import edu.cmu.sei.ams.cloudlet.android.CloudletCallback;
-import edu.cmu.sei.ams.cloudlet.android.CredentialsManager;
 import edu.cmu.sei.ams.cloudlet.android.FindCloudletsAsyncTask;
 import edu.cmu.sei.cloudlet.client.R;
 

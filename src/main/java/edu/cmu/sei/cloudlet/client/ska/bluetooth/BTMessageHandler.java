@@ -137,8 +137,6 @@ public class BTMessageHandler {
                 Log.v(TAG, "Receiving data");
                 Log.v(TAG, parsedMessage.toString());
                 String result = mInDataHandler.handleData(parsedMessage, mContext);
-
-                //sendMessage(REPLY_ACK);
                 Log.v(TAG, "Finished processing received data");
 
                 Log.v(TAG, "Returning result.");
@@ -146,15 +144,17 @@ public class BTMessageHandler {
             }
             else if(command.equals(CMD_RECEIVE_FILE)) {
                 Log.v(TAG, "Receiving a file");
+                String cloudletName = parsedMessage.getString("cloudlet_name");
                 String fileName = parsedMessage.getString("file_id");
                 Log.v(TAG, fileName);
+
                 sendMessage(REPLY_ACK);
 
                 // Get the actual file data contents.
                 byte[] fileData = receiveFile();
                 //sendMessage(REPLY_ACK);
 
-                String result = mFileDataHandler.storeFile(fileData, fileName, mContext);
+                String result = mFileDataHandler.storeFile(cloudletName, fileData, fileName, mContext);
                 Log.v(TAG, "Finished processing received file");
 
                 Log.v(TAG, "Returning result.");

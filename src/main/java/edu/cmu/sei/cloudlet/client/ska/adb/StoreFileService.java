@@ -56,13 +56,15 @@ public class StoreFileService extends Service {
 
     @Override
     public int onStartCommand (Intent intent, int flags, int startId) {
+        String cloudletName = intent.getStringExtra("cloudlet_name");
+
         // File path depends on the file we are getting.
         String fileId = intent.getStringExtra("file_id");
         String filePath = ADBConstants.ADB_FILES_PATH + fileId;
         Log.v(TAG, "Received request to store file: " + fileId);
 
         byte[] data = FileHandler.readFromFile(filePath);
-        String result = mFileHandler.storeFile(data, fileId, this);
+        String result = mFileHandler.storeFile(cloudletName, data, fileId, this);
 
         Log.v(TAG, "Writing result to file.");
         FileHandler.writeToFile(ADBConstants.OUT_FILE_PATH, result);

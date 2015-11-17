@@ -6,17 +6,18 @@ import android.content.BroadcastReceiver;
 import android.content.Context;
 import android.content.Intent;
 import android.content.IntentFilter;
-import android.net.wifi.WifiManager;
 import android.os.Bundle;
 import android.util.Log;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
 import android.widget.Button;
+import android.widget.EditText;
 import android.widget.Switch;
 import android.widget.TextView;
+import android.widget.Toast;
 
-import edu.cmu.sei.ams.cloudlet.android.CredentialsManager;
+import edu.cmu.sei.ams.cloudlet.android.DeviceIdManager;
 import edu.cmu.sei.cloudlet.client.R;
 import edu.cmu.sei.cloudlet.client.security.WifiProfileManager;
 import edu.cmu.sei.cloudlet.client.ska.bluetooth.BTSKAPairingService;
@@ -34,6 +35,7 @@ public class PairingActivity extends Activity {
     private BTSKAPairingService mPairingService = null;
 
     private TextView mIdLabel = null;
+    private EditText cloudletNameText = null;
 
     private final BroadcastReceiver mModeReceiver = new BroadcastReceiver() {
         @Override
@@ -58,7 +60,9 @@ public class PairingActivity extends Activity {
 
         mDiscoverableSwitch = (Switch) findViewById(R.id.discoverySwitch);
         mIdLabel = (TextView) findViewById(R.id.idLabel);
-        mIdLabel.setText(CredentialsManager.getDeviceId(this));
+        mIdLabel.setText(DeviceIdManager.getDeviceId(this));
+
+        cloudletNameText = (EditText) findViewById(R.id.cloudletNameText);
 
         mPairingService = new BTSKAPairingService(this);
 
@@ -68,7 +72,11 @@ public class PairingActivity extends Activity {
             @Override
             public void onClick(View view)
             {
-                WifiProfileManager.reGenerateProfile(PairingActivity.this);
+                String cloudletName = cloudletNameText.getText().toString();
+                if(cloudletName.equals(""))
+                    Toast.makeText(PairingActivity.this, "Please input a cloudlet name.", Toast.LENGTH_LONG).show();
+                else
+                    WifiProfileManager.reGenerateProfile(cloudletName, PairingActivity.this);
             }
         });
     }
