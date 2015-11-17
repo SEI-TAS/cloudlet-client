@@ -17,6 +17,10 @@ import android.widget.Switch;
 import android.widget.TextView;
 import android.widget.Toast;
 
+import java.io.File;
+
+import edu.cmu.sei.ams.cloudlet.ICredentialsManager;
+import edu.cmu.sei.ams.cloudlet.android.AndroidCredentialsManager;
 import edu.cmu.sei.ams.cloudlet.android.DeviceIdManager;
 import edu.cmu.sei.cloudlet.client.R;
 import edu.cmu.sei.cloudlet.client.security.WifiProfileManager;
@@ -125,8 +129,11 @@ public class PairingActivity extends Activity {
         int id = item.getItemId();
 
         //noinspection SimplifiableIfStatement
-        if (id == R.id.action_settings) {
-            return true;
+        if (id == R.id.clear_credentials) {
+            ICredentialsManager credentialsManager = new AndroidCredentialsManager();
+            credentialsManager.clearCredentials();
+
+            Toast.makeText(this, "Credentials cleared.", Toast.LENGTH_LONG).show();
         }
 
         return super.onOptionsItemSelected(item);
