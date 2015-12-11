@@ -36,9 +36,11 @@ import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
 import android.widget.Button;
+import android.widget.TextView;
 import android.widget.Toast;
 
 import edu.cmu.sei.ams.cloudlet.android.CloudletPreferences;
+import edu.cmu.sei.cloudlet.client.BuildConfig;
 import edu.cmu.sei.cloudlet.client.R;
 
 /**
@@ -55,11 +57,15 @@ public class NewProcessSelectionActivity extends Activity
 
         setContentView(R.layout.new_process_selection);
 
+        final TextView versionTextView = (TextView) findViewById(R.id.versionTextView);
         final Button cloudletButton = (Button) findViewById(R.id.cloudlet_selection);
         final Button appButton = (Button) findViewById(R.id.app_selection);
         final Button pairingButton = (Button) findViewById(R.id.pairing_selection);
 
-        //Make the old cloudlet app run
+        // Show version.
+        versionTextView.setText(versionTextView.getText() + BuildConfig.VERSION_NAME);
+
+        // Make the old cloudlet app run
         cloudletButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
@@ -79,7 +85,7 @@ public class NewProcessSelectionActivity extends Activity
             }
         });
 
-        //Start the service selection activity
+        // Start the service selection activity
         pairingButton.setOnClickListener(new View.OnClickListener()
         {
             @Override
