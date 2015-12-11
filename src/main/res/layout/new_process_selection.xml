@@ -36,11 +36,27 @@
         android:text="Select Process"
         android:textAppearance="?android:attr/textAppearanceMedium"
         android:textColor="#000000" />
-	
-	<RelativeLayout
+
+    <RelativeLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_below="@+id/cloudlet_selection"
+        android:layout_alignParentStart="true"
+        android:layout_weight="0.51">
+
+        <Button
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="List Cloudlet Networks"
+            android:id="@+id/network_list_buton"
+            android:layout_centerVertical="true"
+            android:layout_centerHorizontal="true" />
+    </RelativeLayout>
+
+    <RelativeLayout
         android:layout_width="match_parent"
         android:layout_height="0dip"
-        android:layout_weight="1.16"
+        android:layout_weight="1"
 	    android:orientation="vertical" >
 
         <Button
@@ -56,7 +72,7 @@ android:text="List Cloudlets"
     <RelativeLayout
             android:layout_width="match_parent"
             android:layout_height="0dip"
-            android:layout_weight="1.16"
+            android:layout_weight="1.00"
             android:orientation="vertical" >
 
         <Button
@@ -72,7 +88,7 @@ android:text="List Cloudlets"
     <RelativeLayout
         android:layout_width="match_parent"
         android:layout_height="0dip"
-        android:layout_weight="1.16"
+        android:layout_weight="1"
 	    android:orientation="vertical" >
 
         <Button

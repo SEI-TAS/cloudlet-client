@@ -58,6 +58,7 @@ public class NewProcessSelectionActivity extends Activity
         setContentView(R.layout.new_process_selection);
 
         final TextView versionTextView = (TextView) findViewById(R.id.versionTextView);
+        final Button networkListButton = (Button) findViewById(R.id.network_list_buton);
         final Button cloudletButton = (Button) findViewById(R.id.cloudlet_selection);
         final Button appButton = (Button) findViewById(R.id.app_selection);
         final Button pairingButton = (Button) findViewById(R.id.pairing_selection);
@@ -65,7 +66,16 @@ public class NewProcessSelectionActivity extends Activity
         // Show version.
         versionTextView.setText(versionTextView.getText() + BuildConfig.VERSION_NAME);
 
-        // Make the old cloudlet app run
+        // List of cloudlet networks.
+        networkListButton.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                Intent i = new Intent(NewProcessSelectionActivity.this, CloudletNetworkListActivity.class);
+                startActivity(i);
+            }
+        });
+
+        // List of cloudlets in current network.
         cloudletButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
@@ -74,8 +84,7 @@ public class NewProcessSelectionActivity extends Activity
             }
         });
 
-        //cloudletButton.setVisibility(View.GONE);
-
+        // App Store.
         appButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view)
@@ -85,7 +94,7 @@ public class NewProcessSelectionActivity extends Activity
             }
         });
 
-        // Start the service selection activity
+        // Pairing activity.
         pairingButton.setOnClickListener(new View.OnClickListener()
         {
             @Override

@@ -59,6 +59,9 @@
             android:enabled="true"
             android:exported="true" >
         </service>
+
+        <activity android:name=".ui.CloudletNetworkListActivity" >
+        </activity>
     </application>
 
 </manifest>

@@ -45,7 +45,6 @@ import android.view.Menu;
 import android.view.MenuItem;
 import android.widget.ArrayAdapter;
 import android.widget.ListView;
-import android.widget.TextView;
 
 public class CloudletDiscoveryActivity extends Activity
 {
@@ -61,9 +60,6 @@ public class CloudletDiscoveryActivity extends Activity
 
 		super.onCreate(savedInstanceState);
 		setContentView(R.layout.cloudlet_discovery);
-
-		TextView tv = (TextView) findViewById(R.id.message);
-		tv.setText("List of Available Cloudlets");
 
 		ListView lv = (ListView) findViewById(R.id.cloudlet_list);
 		adapter = new ArrayAdapter<String>(this, R.layout.cloudlet_discovery_item);
