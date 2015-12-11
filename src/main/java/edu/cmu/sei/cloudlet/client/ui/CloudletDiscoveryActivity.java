@@ -29,99 +29,76 @@ http://jquery.org/license
 */
 package edu.cmu.sei.cloudlet.client.ui;
 
-import java.net.InetAddress;
-import java.net.NetworkInterface;
-import java.net.URL;
-import java.util.Collections;
 import java.util.List;
-
-import javax.jmdns.ServiceEvent;
-import javax.jmdns.ServiceListener;
 
 import edu.cmu.sei.ams.cloudlet.Cloudlet;
 import edu.cmu.sei.ams.cloudlet.android.CloudletCallback;
 import edu.cmu.sei.ams.cloudlet.android.FindCloudletsAsyncTask;
 import edu.cmu.sei.cloudlet.client.R;
 
-import android.annotation.SuppressLint;
 import android.app.Activity;
 import android.app.AlertDialog;
-import android.app.ProgressDialog;
 import android.content.DialogInterface;
 import android.os.Bundle;
 import android.util.Log;
 import android.view.Menu;
 import android.view.MenuItem;
-import android.view.View;
-import android.widget.AdapterView;
-import android.widget.AdapterView.OnItemClickListener;
 import android.widget.ArrayAdapter;
 import android.widget.ListView;
 import android.widget.TextView;
 
-public class CloudletDiscoveryActivity extends Activity implements ServiceListener 
+public class CloudletDiscoveryActivity extends Activity
 {
 	public static final int MENU_OPTION_DISCOVER_CLOUDLETS = 1;
-	protected ProgressDialog mProgressDialog = null;
-	public static final String ASYNC_TASK_STATUS_SUCCESS = "success";
-	public static final String ASYNC_TASK_STATUS_FAILURE = "failure";
-	private static final String LOG_TAG = "AvailableCloudletsAct";
-	private static final String CLOUDLET_SERVER_DNS = "_cloudlet._tcp.local.";
-	List<Cloudlet> cloudlets = null;
-	String[] cloudletListData = null;
+	private static final String LOG_TAG = "CloudletDiscoveryAct";
 	ArrayAdapter<String> adapter;
 
 	/** Called when the activity is first created. */
 	@Override
-	public void onCreate(Bundle savedInstanceState) {
-
-        ClassLoader classLoader = CloudletDiscoveryActivity.class.getClassLoader();
-        URL resource = classLoader.getResource("org/apache/http/message/BasicLineFormatter.class");
-        Log.v("CLOUDLET", "Class loaded by: " + resource);
+	public void onCreate(Bundle savedInstanceState)
+	{
+        Log.d(LOG_TAG, "onCreate");
 
 		super.onCreate(savedInstanceState);
-		setContentView(R.layout.cloudlet_discovery);	
-		Log.d(LOG_TAG, "onCreate");
+		setContentView(R.layout.cloudlet_discovery);
+
 		TextView tv = (TextView) findViewById(R.id.message);
 		tv.setText("List of Available Cloudlets");
+
 		ListView lv = (ListView) findViewById(R.id.cloudlet_list);
 		adapter = new ArrayAdapter<String>(this, R.layout.cloudlet_discovery_item);
 		lv.setAdapter(adapter);
-		lv.setOnItemClickListener(new OnItemClickListener() {
-			public void onItemClick(AdapterView<?> parent, View view,
-					int position, long id) {
-				// Invoke OverlayDetailsActivity
-				//invokeOverlayDetailsActivity(position);
-			}
-		});
 		
 		// Run initial discovery.
 		runDiscoveryProcess();
 	}	
 
 	@Override
-	public boolean onCreateOptionsMenu(Menu menu) {
-
+	public boolean onCreateOptionsMenu(Menu menu)
+    {
 		menu.add(0, MENU_OPTION_DISCOVER_CLOUDLETS, 0, "Discover Cloudlets");
 		return super.onPrepareOptionsMenu(menu);
-
 	}
 
 	@Override
-	public boolean onMenuItemSelected(int featureId, MenuItem item) {
-
+	public boolean onMenuItemSelected(int featureId, MenuItem item)
+    {
 		Log.d(LOG_TAG, "onMenuItemSelected");
 
-		switch (item.getItemId()) {
-
-		case MENU_OPTION_DISCOVER_CLOUDLETS:
-			runDiscoveryProcess();
-			break;
+		switch (item.getItemId())
+        {
+            case MENU_OPTION_DISCOVER_CLOUDLETS:
+                runDiscoveryProcess();
+                break;
 		}
-		return true;
 
+		return true;
 	}
-	
+
+    /**
+     * Starts an async task to find cloudlets and add them to the visual list when done.
+     * Also updates the connection info in the connection fragment (current network and IP).
+     */
 	private void runDiscoveryProcess()
 	{
 	    ConnectionInfoFragment connInfoFragment = (ConnectionInfoFragment) getFragmentManager().findFragmentById(R.id.connInfoPanel);
@@ -139,32 +116,18 @@ public class CloudletDiscoveryActivity extends Activity implements ServiceListen
         task.execute();
 	}
 
-	@Override
-	public void serviceAdded(ServiceEvent event) {
-		Log.d(LOG_TAG,
-				"Service added   : " + event.getName() + "." + event.getType());
-	}
-
-	@Override
-	public void serviceRemoved(ServiceEvent event) {
-		Log.d(LOG_TAG,
-				"Service removed : " + event.getName() + "." + event.getType());
-	}
-
-	@Override
-	public void serviceResolved(ServiceEvent event) {
-		Log.d(LOG_TAG,
-				"Service resolved: " + event.getName() + "." + event.getType()
-				+ "\n" + event.getInfo());
-	}
-
+    /***
+     * Adds data of the given cloudlets to the array adapter for the visual list.
+     * @param cloudlets A list of cloudlets found.
+     */
 	@SuppressWarnings("deprecation")
-    private void fillData(List<Cloudlet> cloudlets) {
+    private void fillData(List<Cloudlet> cloudlets)
+    {
+        adapter.clear();
 
 		if (cloudlets == null || cloudlets.size() == 0) {
-			Log.d(LOG_TAG, "No cloudlets nearby");
-			adapter.clear();
-			
+            Log.d(LOG_TAG, "No cloudlets nearby");
+
 			AlertDialog alertDialog = new AlertDialog.Builder(this).create();  
 			Log.d(LOG_TAG, "Displaying alert");
 			alertDialog.setTitle("Cloudlet Discovery Failed");  
@@ -178,60 +141,19 @@ public class CloudletDiscoveryActivity extends Activity implements ServiceListen
 		}
 		else
 		{
-            this.cloudlets = cloudlets;
 			Log.d(LOG_TAG, "Cloudlets nearby");
 			Log.d(LOG_TAG, "Cloudlet Info Length = " + cloudlets.size());
-			adapter.clear();
             for (Cloudlet cloudlet : cloudlets)
 			{
-				String encryptionState = "disabled";
-				if(cloudlet.isEncryptionEnabled())
-					encryptionState = "enabled";
-				Log.d(LOG_TAG, "Name = "+ cloudlet.getName());
-				Log.d(LOG_TAG, "IP = "+ cloudlet.getAddress());
-				Log.d(LOG_TAG, "Port = " + cloudlet.getPort());
-				Log.d(LOG_TAG, "Encryption = " + encryptionState);
-				adapter.add(cloudlet.getName() + ":" +
-						cloudlet.getAddress() + ":" +
-						cloudlet.getPort() + " (encryption " + encryptionState + ")");
+				String encryptionState = cloudlet.isEncryptionEnabled() ? "enabled" : "disabled";
+                String descriptor = cloudlet.getName() + ":" +
+                                    cloudlet.getAddress() + ":" +
+                                    cloudlet.getPort() + " (encryption " + encryptionState + ")";
+				Log.d(LOG_TAG, descriptor);
+				adapter.add(descriptor);
 			}
 			
-			//adapter.notifyDataSetChanged();
 			Log.d(LOG_TAG,"Added data to list adapter");
 		}
-
 	}
-	
-    /**
-     * Get IP address from first non-localhost interface
-     * @return  address or null if nothing was found.
-     */
-    @SuppressLint("DefaultLocale")
-    public static InetAddress getLocalIPAddress() 
-    {
-        try 
-        {
-            List<NetworkInterface> interfaces = Collections.list(NetworkInterface.getNetworkInterfaces());
-            for (NetworkInterface intf : interfaces) 
-			{
-                List<InetAddress> addrs = Collections.list(intf.getInetAddresses());
-                for (InetAddress addr : addrs) 
-				{
-                    if (!addr.isLoopbackAddress()) 
-					{
-                        String sAddr = addr.getHostAddress().toUpperCase();
-                        Log.d(LOG_TAG, "Local IP address found: " + sAddr);
-                        return addr;
-                    }
-                }
-            }
-        } 
-        catch (Exception ex) 
-        { 
-        	Log.w(LOG_TAG, "Exception looking for local IP address:" + ex.toString());
-        } 
-		
-        Log.w(LOG_TAG, "No valid local IP address found!");
-        return null;
-    }	
 }
