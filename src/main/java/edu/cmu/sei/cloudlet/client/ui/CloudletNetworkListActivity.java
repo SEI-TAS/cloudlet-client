@@ -43,12 +43,8 @@ import android.widget.ListView;
 import java.util.ArrayList;
 import java.util.List;
 
-import edu.cmu.sei.ams.cloudlet.Cloudlet;
-import edu.cmu.sei.ams.cloudlet.CloudletFinder;
-import edu.cmu.sei.ams.cloudlet.android.AndroidCredentialsManager;
 import edu.cmu.sei.ams.cloudlet.android.CloudletAsyncTask;
 import edu.cmu.sei.ams.cloudlet.android.CloudletCallback;
-import edu.cmu.sei.ams.cloudlet.android.DeviceIdManager;
 import edu.cmu.sei.cloudlet.client.R;
 
 public class CloudletNetworkListActivity extends Activity
@@ -58,53 +54,34 @@ public class CloudletNetworkListActivity extends Activity
 
     private ArrayAdapter<String> listAdapter;
 
-    /**
-     * Represents a cloudlet network.
-     */
-    class CloudletNetwork
-    {
-        public static final String PREFIX = "cloudlet-";
-
-        private String name;
-
-        public CloudletNetwork(String ssid)
-        {
-            // TODO: remove prefix.
-            name = ssid;
-        }
-
-        public String getName()
-        {
-            return name;
-        }
-    }
-
-    public class FindCloudletNetworksAsyncTask extends CloudletAsyncTask<List<CloudletNetwork>>
+    public class FindCloudletNetworksAsyncTask extends CloudletAsyncTask<List<PairingActivity.CloudletNetwork>>
     {
         private static final String TITLE = "Cloudlet";
         private static final String MESSAGE = "Searching for Cloudlet Networks...";
 
-        public FindCloudletNetworksAsyncTask(Context context, CloudletCallback<List<CloudletNetwork>> callback)
+        public FindCloudletNetworksAsyncTask(Context context, CloudletCallback<List<PairingActivity.CloudletNetwork>> callback)
         {
             super(context, callback, TITLE, MESSAGE);
         }
 
         @Override
-        protected List<CloudletNetwork> doInBackground(Void... params)
+        protected List<PairingActivity.CloudletNetwork> doInBackground(Void... params)
         {
             try
             {
                 Log.i("FindCloudletsAsyncTask", "Finding cloudlet networks");
 
                 // TODO: actually find them.
+                PairingActivity.CloudletNetworkFinder finder = new PairingActivity.CloudletNetworkFinder(CloudletNetworkListActivity.this);
+                finder.findNetworks();
 
-                return new ArrayList<CloudletNetwork>();
+                return new ArrayList<PairingActivity.CloudletNetwork>();
             }
             catch(Exception e)
             {
                 Log.e("FindCloudletsAsyncTask", "Error finding cloudlet networks: ", e);
                 this.mException = e;
-                return new ArrayList<CloudletNetwork>();
+                return new ArrayList<PairingActivity.CloudletNetwork>();
             }
         }
     }
@@ -150,10 +127,10 @@ public class CloudletNetworkListActivity extends Activity
      */
     private void runDiscoveryProcess()
     {
-        FindCloudletNetworksAsyncTask task = new FindCloudletNetworksAsyncTask(this, new CloudletCallback<List<CloudletNetwork>>()
+        FindCloudletNetworksAsyncTask task = new FindCloudletNetworksAsyncTask(this, new CloudletCallback<List<PairingActivity.CloudletNetwork>>()
         {
             @Override
-            public void handle(List<CloudletNetwork> cloudletNetworks)
+            public void handle(List<PairingActivity.CloudletNetwork> cloudletNetworks)
             {
                 fillData(cloudletNetworks);
             }
@@ -167,7 +144,7 @@ public class CloudletNetworkListActivity extends Activity
      * @param cloudletNetworks A list of cloudlet networks found.
      */
     @SuppressWarnings("deprecation")
-    private void fillData(List<CloudletNetwork> cloudletNetworks)
+    private void fillData(List<PairingActivity.CloudletNetwork> cloudletNetworks)
     {
         listAdapter.clear();
 
@@ -188,7 +165,7 @@ public class CloudletNetworkListActivity extends Activity
 
         Log.d(LOG_TAG, "Cloudlets nearby");
         Log.d(LOG_TAG, "Cloudlet Info Length = " + cloudletNetworks.size());
-        for (CloudletNetwork cloudletNetwork : cloudletNetworks)
+        for (PairingActivity.CloudletNetwork cloudletNetwork : cloudletNetworks)
         {
             String descriptor = cloudletNetwork.getName();
             Log.d(LOG_TAG, descriptor);
