@@ -37,7 +37,6 @@ import android.util.Log;
 
 import java.util.List;
 
-
 /**
  * Created by Sebastian on 2015-12-11.
  */
