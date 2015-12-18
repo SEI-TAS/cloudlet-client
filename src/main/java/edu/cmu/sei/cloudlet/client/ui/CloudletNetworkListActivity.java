@@ -46,6 +46,8 @@ import java.util.List;
 import edu.cmu.sei.ams.cloudlet.android.CloudletAsyncTask;
 import edu.cmu.sei.ams.cloudlet.android.CloudletCallback;
 import edu.cmu.sei.cloudlet.client.R;
+import edu.cmu.sei.cloudlet.client.wifi.CloudletNetwork;
+import edu.cmu.sei.cloudlet.client.wifi.CloudletNetworkFinder;
 
 public class CloudletNetworkListActivity extends Activity
 {
@@ -54,34 +56,42 @@ public class CloudletNetworkListActivity extends Activity
 
     private ArrayAdapter<String> listAdapter;
 
-    public class FindCloudletNetworksAsyncTask extends CloudletAsyncTask<List<PairingActivity.CloudletNetwork>>
+    public class FindCloudletNetworksAsyncTask extends CloudletAsyncTask<List<CloudletNetwork>>
     {
         private static final String TITLE = "Cloudlet";
         private static final String MESSAGE = "Searching for Cloudlet Networks...";
 
-        public FindCloudletNetworksAsyncTask(Context context, CloudletCallback<List<PairingActivity.CloudletNetwork>> callback)
+        public FindCloudletNetworksAsyncTask(Context context, CloudletCallback<List<CloudletNetwork>> callback)
         {
             super(context, callback, TITLE, MESSAGE);
         }
 
         @Override
-        protected List<PairingActivity.CloudletNetwork> doInBackground(Void... params)
+        protected List<CloudletNetwork> doInBackground(Void... params)
         {
             try
             {
                 Log.i("FindCloudletsAsyncTask", "Finding cloudlet networks");
 
-                // TODO: actually find them.
-                PairingActivity.CloudletNetworkFinder finder = new PairingActivity.CloudletNetworkFinder(CloudletNetworkListActivity.this);
+                // Find the networks.
+                CloudletNetworkFinder finder = new CloudletNetworkFinder(CloudletNetworkListActivity.this);
                 finder.findNetworks();
 
-                return new ArrayList<PairingActivity.CloudletNetwork>();
+                // Wait till results are obtained.
+                // TODO: add timeout.
+                while(finder.getNetworks() == null)
+                {
+                    Thread.sleep(1000);
+                }
+
+                // Returns the networks found.
+                return finder.getNetworks();
             }
             catch(Exception e)
             {
                 Log.e("FindCloudletsAsyncTask", "Error finding cloudlet networks: ", e);
                 this.mException = e;
-                return new ArrayList<PairingActivity.CloudletNetwork>();
+                return new ArrayList<CloudletNetwork>();
             }
         }
     }
@@ -127,10 +137,10 @@ public class CloudletNetworkListActivity extends Activity
      */
     private void runDiscoveryProcess()
     {
-        FindCloudletNetworksAsyncTask task = new FindCloudletNetworksAsyncTask(this, new CloudletCallback<List<PairingActivity.CloudletNetwork>>()
+        FindCloudletNetworksAsyncTask task = new FindCloudletNetworksAsyncTask(this, new CloudletCallback<List<CloudletNetwork>>()
         {
             @Override
-            public void handle(List<PairingActivity.CloudletNetwork> cloudletNetworks)
+            public void handle(List<CloudletNetwork> cloudletNetworks)
             {
                 fillData(cloudletNetworks);
             }
@@ -144,7 +154,7 @@ public class CloudletNetworkListActivity extends Activity
      * @param cloudletNetworks A list of cloudlet networks found.
      */
     @SuppressWarnings("deprecation")
-    private void fillData(List<PairingActivity.CloudletNetwork> cloudletNetworks)
+    private void fillData(List<CloudletNetwork> cloudletNetworks)
     {
         listAdapter.clear();
 
@@ -165,7 +175,7 @@ public class CloudletNetworkListActivity extends Activity
 
         Log.d(LOG_TAG, "Cloudlets nearby");
         Log.d(LOG_TAG, "Cloudlet Info Length = " + cloudletNetworks.size());
-        for (PairingActivity.CloudletNetwork cloudletNetwork : cloudletNetworks)
+        for (CloudletNetwork cloudletNetwork : cloudletNetworks)
         {
             String descriptor = cloudletNetwork.getName();
             Log.d(LOG_TAG, descriptor);

@@ -32,7 +32,7 @@ package edu.cmu.sei.cloudlet.client.wifi;
 /**
  * Represents a cloudlet network.
  */
-class CloudletNetwork
+public class CloudletNetwork
 {
     // Prefix to identify a valid network.
     public static final String PREFIX = "cloudlet-";

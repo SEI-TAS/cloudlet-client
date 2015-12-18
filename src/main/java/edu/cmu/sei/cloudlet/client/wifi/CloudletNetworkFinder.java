@@ -57,6 +57,11 @@ public class CloudletNetworkFinder implements IScanResultsHandler
         this.context = context;
     }
 
+    public List<CloudletNetwork> getNetworks()
+    {
+        return networks;
+    }
+
     /**
      * Stars and asyncrhonous scan for Wi-Fi networks.
      * @return true if the scan was started, false if the scan could not be started.
