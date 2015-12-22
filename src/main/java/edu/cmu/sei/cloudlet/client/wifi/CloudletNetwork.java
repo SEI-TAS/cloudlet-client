@@ -29,11 +29,19 @@ http://jquery.org/license
 */
 package edu.cmu.sei.cloudlet.client.wifi;
 
+import android.net.wifi.WifiConfiguration;
+import android.net.wifi.WifiManager;
+import android.util.Log;
+
+import java.util.List;
+
 /**
  * Represents a cloudlet network.
  */
 public class CloudletNetwork
 {
+    private static final String LOG_TAG = "CloudletNetwork";
+
     // Prefix to identify a valid network.
     public static final String PREFIX = "cloudlet-";
 
@@ -57,17 +65,37 @@ public class CloudletNetwork
     public CloudletNetwork(String ssid)
     {
         // Remove the prefix.
-        name = null;
-        String[] parts = ssid.split("-");
-        if(parts.length > 1)
-        {
-            name = parts[1];
-        }
+        name = ssid.substring(PREFIX.length());
     }
 
     // Getter
     public String getName()
     {
         return name;
+    }
+
+    /**
+     * Attempts to connect to this network, if it was known.
+     * @param wifiManager The WifiManager to use to connect.
+     * @return
+     */
+    public boolean connect(WifiManager wifiManager)
+    {
+        String quotedSSID = "\"" + PREFIX + name + "\"";
+        List<WifiConfiguration> savedNetworks = wifiManager.getConfiguredNetworks();
+        for(WifiConfiguration config : savedNetworks)
+        {
+            if(quotedSSID.equals(config.SSID))
+            {
+                // Actually connect to the network.
+                Log.v(LOG_TAG, "Attempting connection to known network " + quotedSSID);
+                boolean disableOtherNetworks = true;
+                return wifiManager.enableNetwork(config.networkId, disableOtherNetworks);
+            }
+        }
+
+        // Network is not known.
+        Log.w(LOG_TAG, "Network was not previously known: " + quotedSSID);
+        return false;
     }
 }

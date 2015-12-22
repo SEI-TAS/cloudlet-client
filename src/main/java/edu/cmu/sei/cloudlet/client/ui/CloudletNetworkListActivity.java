@@ -56,6 +56,9 @@ public class CloudletNetworkListActivity extends Activity
 
     private ArrayAdapter<String> listAdapter;
 
+    /**
+     * Task to find cloudlet networks asynchronously.
+     */
     public class FindCloudletNetworksAsyncTask extends CloudletAsyncTask<List<CloudletNetwork>>
     {
         private static final String TITLE = "Cloudlet";
