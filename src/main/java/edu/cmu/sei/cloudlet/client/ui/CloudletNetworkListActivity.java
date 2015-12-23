@@ -82,17 +82,7 @@ public class CloudletNetworkListActivity extends Activity
 
                 // Find the networks.
                 CloudletNetworkFinder finder = new CloudletNetworkFinder(CloudletNetworkListActivity.this);
-                finder.findNetworks();
-
-                // Wait till results are obtained.
-                // TODO: add timeout.
-                while(!finder.hasScanFinished())
-                {
-                    Thread.sleep(1000);
-                }
-
-                // Returns the networks found.
-                return finder.getNetworks();
+                return finder.findNetworks();
             }
             catch(Exception e)
             {

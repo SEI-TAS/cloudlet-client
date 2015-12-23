@@ -81,10 +81,32 @@ public class CloudletNetworkFinder extends BroadcastReceiver
     }
 
     /**
+     * Synch method to block till networks are found.
+     * @return
+     */
+    public List<CloudletNetwork> findNetworks()
+    {
+        findNetworksAsync();
+
+        // Wait till results are obtained.
+        // TODO: add timeout.
+        while(!hasScanFinished())
+        {
+            try {
+                Thread.sleep(1000);
+            } catch (InterruptedException e) {
+                e.printStackTrace();
+            }
+        }
+
+        return networks;
+    }
+
+    /**
      * Stars and asyncrhonous scan for Wi-Fi networks.
      * @return true if the scan was started, false if the scan could not be started.
      */
-    public boolean findNetworks()
+    public boolean findNetworksAsync()
     {
         // Check that we have a Wi-Fi card.
         if (!context.getPackageManager().hasSystemFeature(PackageManager.FEATURE_WIFI))

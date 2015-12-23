@@ -34,11 +34,7 @@ package edu.cmu.sei.cloudlet.client.wifi;
  */
 
 import android.content.Context;
-import android.net.wifi.WifiConfiguration;
-import android.net.wifi.WifiManager;
 import android.util.Log;
-
-import java.util.List;
 
 import edu.cmu.sei.ams.cloudlet.android.CloudletAsyncTask;
 import edu.cmu.sei.ams.cloudlet.android.CloudletCallback;
@@ -77,25 +73,8 @@ public class ConnectToCloudletNetworkAsyncTask extends CloudletAsyncTask<Boolean
     {
         try
         {
-            Log.i(LOG_TAG, "Connecting to cloudlet network");
-            WifiManager wifiManager = (WifiManager) mContext.getSystemService(Context.WIFI_SERVICE);
-
-            String quotedSSID = "\"" + ssid + "\"";
-            List<WifiConfiguration> savedNetworks = wifiManager.getConfiguredNetworks();
-            for(WifiConfiguration config : savedNetworks)
-            {
-                if(quotedSSID.equals(config.SSID))
-                {
-                    // Actually connect to the network.
-                    Log.v(LOG_TAG, "Attempting connection to known network " + quotedSSID);
-                    boolean disableOtherNetworks = true;
-                    return wifiManager.enableNetwork(config.networkId, disableOtherNetworks);
-                }
-            }
-
-            // Network is not known.
-            Log.w(LOG_TAG, "Network was not previously known: " + quotedSSID);
-            return false;
+            CloudletNetwork network = new CloudletNetwork(ssid);
+            return network.connect(mContext);
         }
         catch(Exception e)
         {
