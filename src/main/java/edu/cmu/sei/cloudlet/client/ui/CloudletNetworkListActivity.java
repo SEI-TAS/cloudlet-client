@@ -33,10 +33,13 @@ import android.app.Activity;
 import android.app.AlertDialog;
 import android.content.Context;
 import android.content.DialogInterface;
+import android.content.Intent;
 import android.os.Bundle;
 import android.util.Log;
 import android.view.Menu;
 import android.view.MenuItem;
+import android.view.View;
+import android.widget.AdapterView;
 import android.widget.ArrayAdapter;
 import android.widget.ListView;
 
@@ -82,7 +85,7 @@ public class CloudletNetworkListActivity extends Activity
 
                 // Wait till results are obtained.
                 // TODO: add timeout.
-                while(finder.getNetworks() == null)
+                while(!finder.hasScanFinished())
                 {
                     Thread.sleep(1000);
                 }
@@ -108,6 +111,14 @@ public class CloudletNetworkListActivity extends Activity
         ListView lv = (ListView) findViewById(R.id.cloudlet_network_list);
         listAdapter = new ArrayAdapter<String>(this, R.layout.cloudlet_discovery_item);
         lv.setAdapter(listAdapter);
+        lv.setOnItemClickListener(new AdapterView.OnItemClickListener() {
+            @Override
+            public void onItemClick(AdapterView<?> adapter, View view, int position, long id) {
+                String ssid = (String) adapter.getItemAtPosition(position);
+                CloudletNetwork network = new CloudletNetwork(ssid);
+                network.connect(CloudletNetworkListActivity.this);
+            }
+        });
 
         // Initial search.
         runDiscoveryProcess();
@@ -180,7 +191,7 @@ public class CloudletNetworkListActivity extends Activity
         Log.d(LOG_TAG, "Cloudlet Info Length = " + cloudletNetworks.size());
         for (CloudletNetwork cloudletNetwork : cloudletNetworks)
         {
-            String descriptor = cloudletNetwork.getName();
+            String descriptor = cloudletNetwork.getSSID();
             Log.d(LOG_TAG, descriptor);
             listAdapter.add(descriptor);
         }

@@ -29,6 +29,7 @@ http://jquery.org/license
 */
 package edu.cmu.sei.cloudlet.client.wifi;
 
+import android.content.Context;
 import android.net.wifi.WifiConfiguration;
 import android.net.wifi.WifiManager;
 import android.util.Log;
@@ -43,7 +44,10 @@ public class CloudletNetwork
     private static final String LOG_TAG = "CloudletNetwork";
 
     // Prefix to identify a valid network.
-    public static final String PREFIX = "cloudlet-";
+    public static final String PREFIX = "dino";
+
+    // The network's ssid.
+    private String ssid;
 
     // The cloudlet network name.
     private String name;
@@ -64,8 +68,16 @@ public class CloudletNetwork
      */
     public CloudletNetwork(String ssid)
     {
+        this.ssid = ssid;
+
         // Remove the prefix.
         name = ssid.substring(PREFIX.length());
+    }
+
+    // Getter
+    public String getSSID()
+    {
+        return ssid;
     }
 
     // Getter
@@ -79,9 +91,11 @@ public class CloudletNetwork
      * @param wifiManager The WifiManager to use to connect.
      * @return
      */
-    public boolean connect(WifiManager wifiManager)
+    public boolean connect(Context context)
     {
-        String quotedSSID = "\"" + PREFIX + name + "\"";
+        WifiManager wifiManager = (WifiManager) context.getSystemService(Context.WIFI_SERVICE);
+
+        String quotedSSID = "\"" + ssid + "\"";
         List<WifiConfiguration> savedNetworks = wifiManager.getConfiguredNetworks();
         for(WifiConfiguration config : savedNetworks)
         {

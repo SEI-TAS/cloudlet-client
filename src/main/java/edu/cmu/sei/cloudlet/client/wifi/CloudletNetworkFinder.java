@@ -29,22 +29,28 @@ http://jquery.org/license
 */
 package edu.cmu.sei.cloudlet.client.wifi;
 
+import android.content.BroadcastReceiver;
 import android.content.Context;
+import android.content.Intent;
 import android.content.IntentFilter;
 import android.content.pm.PackageManager;
+import android.net.wifi.ScanResult;
 import android.net.wifi.WifiManager;
 import android.util.Log;
 
+import java.util.ArrayList;
 import java.util.List;
 
 /**
+ * Finds valid cloudlet networks.
  * Created by Sebastian on 2015-12-11.
  */
-public class CloudletNetworkFinder implements IScanResultsHandler
+public class CloudletNetworkFinder extends BroadcastReceiver
 {
     Context context;
 
-    ScanReceiver scanReceiver;
+    boolean registered = false;
+    boolean scanFinished = false;
     List<CloudletNetwork> networks;
 
     /**
@@ -56,9 +62,22 @@ public class CloudletNetworkFinder implements IScanResultsHandler
         this.context = context;
     }
 
+    /**
+     * Getter.
+     * @return The current list of valid networks last found.
+     */
     public List<CloudletNetwork> getNetworks()
     {
         return networks;
+    }
+
+    /**
+     * Checks if a given scan has finished.
+     * @return true if it has finished.
+     */
+    public boolean hasScanFinished()
+    {
+        return scanFinished;
     }
 
     /**
@@ -85,21 +104,8 @@ public class CloudletNetworkFinder implements IScanResultsHandler
 
         // Start the async scan.
         networks = null;
+        scanFinished = false;
         return wifiManager.startScan();
-    }
-
-    /**
-     * Handles a list of cloudlet networks.
-     * @param results A list of cloudlet networks.
-     */
-    @Override
-    public void handleScanResults(List<CloudletNetwork> results)
-    {
-        // Unregister scan receiver, we got the results.
-        unregisterScanReceiver();
-
-        // Make the results available.
-        networks = results;
     }
 
     /**
@@ -107,12 +113,8 @@ public class CloudletNetworkFinder implements IScanResultsHandler
      */
     private void registerScanReceiver()
     {
-        if (scanReceiver == null)
-        {
-            scanReceiver = new ScanReceiver(this);
-        }
-
-        context.registerReceiver(scanReceiver, new IntentFilter(android.net.wifi.WifiManager.SCAN_RESULTS_AVAILABLE_ACTION));
+        context.registerReceiver(this, new IntentFilter(android.net.wifi.WifiManager.SCAN_RESULTS_AVAILABLE_ACTION));
+        registered = true;
     }
 
     /**
@@ -120,16 +122,54 @@ public class CloudletNetworkFinder implements IScanResultsHandler
      */
     private void unregisterScanReceiver()
     {
-        if (scanReceiver != null)
+        if (registered)
         {
             try
             {
-                context.unregisterReceiver(scanReceiver);
+                context.unregisterReceiver(this);
+                registered = false;
             }
             catch(IllegalArgumentException exception)
             {
                 Log.w("CloudletNetworkFinder", "We tried to unregister an unregistered scan receiver: " + exception.toString());
             }
+        }
+    }
+
+    /**
+     * Called when there is a new WiFi event.
+     * @param context the Android context.
+     * @param intent the Intent with the event.
+     */
+    @Override
+    public void onReceive(Context context, Intent intent)
+    {
+        // Filter new scan results intents.
+        String action = intent.getAction();
+        boolean scanResultsAvailable = WifiManager.SCAN_RESULTS_AVAILABLE_ACTION.equals(action);
+        if(scanResultsAvailable)
+        {
+            // Get all results.
+            WifiManager wifiManager = (WifiManager) context.getSystemService(Context.WIFI_SERVICE);
+            List<ScanResult> scanResults = wifiManager.getScanResults();
+
+            // Filter valid networks.
+            List<CloudletNetwork> newNetworks = new ArrayList<CloudletNetwork>();
+            for(ScanResult result : scanResults)
+            {
+                if(CloudletNetwork.isValidNetwork(result.SSID))
+                {
+                    CloudletNetwork network = new CloudletNetwork(result.SSID);
+                    newNetworks.add(network);
+                }
+            }
+
+            // Unregister scan receiver, we got the results.
+            unregisterScanReceiver();
+
+            // Make the results available.
+            networks = newNetworks;
+            scanFinished = true;
         }
     }
 }
