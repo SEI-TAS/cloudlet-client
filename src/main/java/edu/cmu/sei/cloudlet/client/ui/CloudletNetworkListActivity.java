@@ -33,7 +33,6 @@ import android.app.Activity;
 import android.app.AlertDialog;
 import android.content.Context;
 import android.content.DialogInterface;
-import android.content.Intent;
 import android.os.Bundle;
 import android.util.Log;
 import android.view.Menu;
@@ -42,6 +41,7 @@ import android.view.View;
 import android.widget.AdapterView;
 import android.widget.ArrayAdapter;
 import android.widget.ListView;
+import android.widget.Toast;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -51,6 +51,7 @@ import edu.cmu.sei.ams.cloudlet.android.CloudletCallback;
 import edu.cmu.sei.cloudlet.client.R;
 import edu.cmu.sei.cloudlet.client.wifi.CloudletNetwork;
 import edu.cmu.sei.cloudlet.client.wifi.CloudletNetworkFinder;
+import edu.cmu.sei.cloudlet.client.wifi.ConnectToCloudletNetworkAsyncTask;
 
 public class CloudletNetworkListActivity extends Activity
 {
@@ -115,8 +116,24 @@ public class CloudletNetworkListActivity extends Activity
             @Override
             public void onItemClick(AdapterView<?> adapter, View view, int position, long id) {
                 String ssid = (String) adapter.getItemAtPosition(position);
-                CloudletNetwork network = new CloudletNetwork(ssid);
-                network.connect(CloudletNetworkListActivity.this);
+                ConnectToCloudletNetworkAsyncTask task = new ConnectToCloudletNetworkAsyncTask(CloudletNetworkListActivity.this, ssid, new CloudletCallback<Boolean>()
+                {
+                    @Override
+                    public void handle(Boolean result)
+                    {
+                        if(result)
+                        {
+                            Toast.makeText(CloudletNetworkListActivity.this, "Connected to network.",
+                                    Toast.LENGTH_SHORT).show();
+                        }
+                        else
+                        {
+                            Toast.makeText(CloudletNetworkListActivity.this, "Problem connecting to network.",
+                                    Toast.LENGTH_SHORT).show();
+                        }
+                    }
+                });
+                task.execute();
             }
         });
 
