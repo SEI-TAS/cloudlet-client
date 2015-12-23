@@ -49,9 +49,9 @@ import java.util.List;
 import edu.cmu.sei.ams.cloudlet.android.CloudletAsyncTask;
 import edu.cmu.sei.ams.cloudlet.android.CloudletCallback;
 import edu.cmu.sei.cloudlet.client.R;
-import edu.cmu.sei.cloudlet.client.wifi.CloudletNetwork;
-import edu.cmu.sei.cloudlet.client.wifi.CloudletNetworkFinder;
-import edu.cmu.sei.cloudlet.client.wifi.ConnectToCloudletNetworkAsyncTask;
+import edu.cmu.sei.ams.cloudlet.android.wifi.CloudletNetwork;
+import edu.cmu.sei.ams.cloudlet.android.wifi.CloudletNetworkFinder;
+import edu.cmu.sei.ams.cloudlet.android.wifi.ConnectToCloudletNetworkAsyncTask;
 
 public class CloudletNetworkListActivity extends Activity
 {
