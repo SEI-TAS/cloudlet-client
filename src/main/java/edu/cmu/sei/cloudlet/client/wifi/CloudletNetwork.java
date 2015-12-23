@@ -88,7 +88,7 @@ public class CloudletNetwork
 
     /**
      * Attempts to connect to this network, if it was known.
-     * @param wifiManager The WifiManager to use to connect.
+     * @param context the Android context.
      * @return
      */
     public boolean connect(Context context)
