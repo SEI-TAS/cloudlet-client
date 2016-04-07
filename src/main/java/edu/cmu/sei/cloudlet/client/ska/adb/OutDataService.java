@@ -38,9 +38,9 @@ import android.util.Log;
 import org.json.JSONException;
 import org.json.JSONObject;
 
-import edu.cmu.sei.cloudlet.client.security.PairingHandler;
 import edu.cmu.sei.ams.cloudlet.android.utils.FileHandler;
 import edu.cmu.sei.cloudlet.client.ska.IOutDataHandler;
+import edu.cmu.sei.cloudlet.client.ska.PairingHandler;
 
 public class OutDataService extends Service {
     private final String TAG = "OutDataService";

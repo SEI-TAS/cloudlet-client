@@ -12,17 +12,18 @@ apply plugin: 'com.android.application'
 repositories {
     mavenLocal()
     mavenCentral()
+    jcenter()
 }
 
 android {
-    compileSdkVersion 18
-    buildToolsVersion "19.1.0"
+    compileSdkVersion 23
+    buildToolsVersion "21.1.2"
 
     defaultConfig {
         minSdkVersion 18
-        targetSdkVersion 18
+        targetSdkVersion 22
         versionCode 14
-        versionName "3.4"
+        versionName "3.4.rc1"
     }
     buildTypes {
         release {
@@ -46,8 +47,6 @@ android {
     }
 }
 
-
-
 dependencies {
     compile(
             'edu.cmu.sei.ams.log:android-slf4j-logger:1.4.1',
@@ -55,5 +54,5 @@ dependencies {
             'edu.cmu.sei.ams.cloudlet:client-lib-android:3.0.0',
             'org.apache.httpcomponents:httpmime:4.1.1')
     compile fileTree(dir: 'libs', include: ['*.jar'])
-    compile 'com.android.support:appcompat-v7:18.0.0'
+    compile 'com.android.support:appcompat-v7:23.2.1'
 }

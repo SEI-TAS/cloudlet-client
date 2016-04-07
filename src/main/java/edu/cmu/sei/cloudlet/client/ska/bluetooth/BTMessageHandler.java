@@ -40,10 +40,10 @@ import java.io.IOException;
 import java.io.InputStream;
 import java.io.OutputStream;
 
-import edu.cmu.sei.cloudlet.client.security.PairingHandler;
 import edu.cmu.sei.cloudlet.client.ska.IInDataHandler;
 import edu.cmu.sei.cloudlet.client.ska.IOutDataHandler;
 import edu.cmu.sei.cloudlet.client.ska.IInFileHandler;
+import edu.cmu.sei.cloudlet.client.ska.PairingHandler;
 
 /**
  * Handles message receiving, sending, and processing.

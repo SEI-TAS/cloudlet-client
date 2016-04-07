@@ -27,7 +27,7 @@ Copyright 2005, 2014 jQuery Foundation, Inc. and other contributors
 Released under the MIT license
 http://jquery.org/license
 */
-package edu.cmu.sei.cloudlet.client.security;
+package edu.cmu.sei.cloudlet.client.ska;
 
 import android.content.Context;
 import android.util.Log;
@@ -35,13 +35,11 @@ import android.util.Log;
 import org.json.JSONException;
 import org.json.JSONObject;
 
-import java.util.Iterator;
+import java.lang.Exception;import java.lang.Override;import java.lang.String;import java.util.Iterator;
 
-import edu.cmu.sei.ams.cloudlet.android.AndroidCredentialsManager;
+import edu.cmu.sei.ams.cloudlet.android.security.AndroidCredentialsManager;
 import edu.cmu.sei.ams.cloudlet.android.DeviceIdManager;
-import edu.cmu.sei.cloudlet.client.ska.IInDataHandler;
-import edu.cmu.sei.cloudlet.client.ska.IInFileHandler;
-import edu.cmu.sei.cloudlet.client.ska.IOutDataHandler;
+import edu.cmu.sei.ams.cloudlet.android.security.WifiProfileManager;
 
 /**
  * Created by Sebastian on 2015-07-02.
@@ -127,16 +125,17 @@ public class PairingHandler implements IInDataHandler, IOutDataHandler, IInFileH
 
                 // A network profile will only be created if we got all three data in the same message.
                 if(!networkId.equals("") && !certName.equals("") && !password.equals("")) {
-                    String serverCertificatePath = credentialsManager.getFullPath(cloudletName, certName);
-
-                    // Store other profile info in case we want to create the profile again.
-                    credentialsManager.storeFile(cloudletName, networkId.getBytes(), WifiProfileManager.SSID_FILE_NAME);
-                    credentialsManager.storeFile(cloudletName, password.getBytes(), WifiProfileManager.AUTH_PASSWORD_FILE_NAME);
-                    credentialsManager.storeFile(cloudletName, serverCertificatePath.getBytes(), WifiProfileManager.SERVER_CERT_PATH_FILE_NAME);
-
                     try {
+                        String serverCertificatePath = credentialsManager.getFullPath(cloudletName, certName);
+
+                        // Store other profile info in case we want to create the profile again.
+                        credentialsManager.storeFile(cloudletName, networkId.getBytes(), WifiProfileManager.SSID_FILE_NAME);
+                        credentialsManager.storeFile(cloudletName, password.getBytes(), WifiProfileManager.AUTH_PASSWORD_FILE_NAME);
+                        credentialsManager.storeFile(cloudletName, serverCertificatePath.getBytes(), WifiProfileManager.SERVER_CERT_PATH_FILE_NAME);
+
                         WifiProfileManager.setupWPA2WifiProfile(networkId, serverCertificatePath,
                                 DeviceIdManager.getDeviceId(context), password, context);
+
                         result.put(RESULT_KEY, SUCCESS);
                         Log.v(TAG, "Wi-Fi profile successfully created.");
                     } catch (Exception e) {

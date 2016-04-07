@@ -49,10 +49,10 @@ import android.widget.Toast;
 
 
 import edu.cmu.sei.ams.cloudlet.ICredentialsManager;
-import edu.cmu.sei.ams.cloudlet.android.AndroidCredentialsManager;
+import edu.cmu.sei.ams.cloudlet.android.security.AndroidCredentialsManager;
 import edu.cmu.sei.ams.cloudlet.android.DeviceIdManager;
 import edu.cmu.sei.cloudlet.client.R;
-import edu.cmu.sei.cloudlet.client.security.WifiProfileManager;
+import edu.cmu.sei.ams.cloudlet.android.security.WifiProfileManager;
 import edu.cmu.sei.cloudlet.client.ska.bluetooth.BTSKAPairingService;
 
 public class PairingActivity extends Activity {
